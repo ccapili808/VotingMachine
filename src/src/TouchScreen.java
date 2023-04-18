@@ -35,19 +35,6 @@ public class TouchScreen {
 
     }
 
-    private void increaseVolume() {
-        if(audioLevel < 10) {
-            audioLevel += 1;
-        }
-        System.out.println("New Audio Level " + audioLevel);
-    }
-    private void decreaseVolume(){
-        if(audioLevel > 0) {
-            audioLevel -= 1;
-        }
-        System.out.println("New Audio Level " + audioLevel);
-    }
-
     private void increaseBrightness() {
         if(brightnessLevel < 10){
             brightnessLevel += 1;
@@ -129,8 +116,8 @@ public class TouchScreen {
         Menu audioMenu = new Menu("Audio Level");
         MenuItem volumeInc = new MenuItem("Volume +1");
         MenuItem volumeDec = new MenuItem("Volume -1");
-        volumeInc.setOnAction(e -> increaseVolume());
-        volumeDec.setOnAction(e -> decreaseVolume());
+        volumeInc.setOnAction(e -> Audio.increaseVolume());
+        volumeDec.setOnAction(e -> Audio.decreaseVolume());
         audioMenu.getItems().add(volumeInc);
         audioMenu.getItems().add(volumeDec);
 

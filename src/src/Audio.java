@@ -1,5 +1,13 @@
 public class Audio {
     public Audio() {};
-    void readInstruction(String instruction) {
+    private void readInstruction(String instruction) {
+    }
+
+    public static void increaseVolume(){
+
+    }
+
+    public static void decreaseVolume(){
+
     }
 }
