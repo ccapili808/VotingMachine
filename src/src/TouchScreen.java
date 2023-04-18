@@ -1,10 +1,10 @@
-import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 public class TouchScreen {
     private final double WINDOW_WIDTH = 800;
@@ -17,10 +17,12 @@ public class TouchScreen {
     private Group root;
     private Scene scene;
     public TouchScreen() {
+        // Default levels
         audioLevel = 5;
         brightnessLevel = 5;
         masterLanguage = "English";
         textSizeLevel = 5;
+
         this.root = new Group();
         setScene();
     }
@@ -110,7 +112,10 @@ public class TouchScreen {
 
     private void setScene() {
         //fill root with layout
-        setMenuLayout();
+        setAccessibilityLayout();
+        setExternalLED();
+
+
         //set scene
         scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
@@ -118,7 +123,7 @@ public class TouchScreen {
         return scene;
     }
 
-    private void setMenuLayout() {
+    private void setAccessibilityLayout() {
         Menu menu = new Menu("Accessibility");
 
         Menu audioMenu = new Menu("Audio Level");
@@ -161,9 +166,20 @@ public class TouchScreen {
         menu.getItems().add(languageMenu);
 
         MenuBar menuBar = new MenuBar(menu);
+        menuBar.setTranslateX(menuBar.getTranslateX() + 600);
+        menuBar.setTranslateY(menuBar.getLayoutY() + 40);
         root.getChildren().add(menuBar);
     }
 
+
+    private void setExternalLED(){
+        Circle externalLED = new Circle(20);
+        externalLED.setFill(Color.YELLOW);
+        externalLED.setTranslateX(externalLED.getTranslateX() + 30);
+        externalLED.setTranslateY(externalLED.getTranslateY() + 20);
+
+        root.getChildren().add(externalLED);
+    }
 
     private Button createButtonWithImage(String pathToImage) {
         Image image = new Image(pathToImage);
