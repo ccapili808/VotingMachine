@@ -1,24 +1,26 @@
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
 public class TouchScreen {
     private final double WINDOW_WIDTH = 800;
     private final double WINDOW_HEIGHT = 600;
-    private Button audioBtn;
-    private Button brightnessBtn;
-    private Button languageBtn;
-    private Button textSizeBtn;
+    private int audioLevel;
+    private int brightnessLevel;
+    private String masterLanguage;
+    private int textSizeLevel;
+
     private Group root;
     private Scene scene;
     public TouchScreen() {
+        audioLevel = 5;
+        brightnessLevel = 5;
+        masterLanguage = "English";
+        textSizeLevel = 5;
         this.root = new Group();
         setScene();
     }
@@ -31,20 +33,53 @@ public class TouchScreen {
 
     }
 
-    private void changeVolume() {
-
+    private void increaseVolume() {
+        if(audioLevel < 10) {
+            audioLevel += 1;
+        }
+        System.out.println("New Audio Level " + audioLevel);
+    }
+    private void decreaseVolume(){
+        if(audioLevel > 0) {
+            audioLevel -= 1;
+        }
+        System.out.println("New Audio Level " + audioLevel);
     }
 
-    private void changeBrightness() {
+    private void increaseBrightness() {
+        if(brightnessLevel < 10){
+            brightnessLevel += 1;
+        }
+        System.out.println("New Brightness Level " + brightnessLevel);
 
     }
-
-    private void changeTextSize() {
-
+    private void decreaseBrightness(){
+        if(brightnessLevel > 0){
+            brightnessLevel -= 1;
+        }
+        System.out.println("New Brightness Level " + brightnessLevel);
     }
 
-    private void changeLanguage() {
+    private void increaseTextSize() {
+        if(textSizeLevel < 10){
+            textSizeLevel += 1;
+        }
+        System.out.println("New Text Size " + textSizeLevel);
 
+    }
+    private void decreaseTextSize(){
+        if(textSizeLevel > 0){
+            textSizeLevel -= 1;
+        }
+        System.out.println("New Text Size " + textSizeLevel);
+    }
+
+    /**
+     * TODO: This is called "displayLanguage()" in SRS
+     */
+    private void changeLanguage(String language) {
+        masterLanguage = language;
+        System.out.println("New Master Language " + masterLanguage);
     }
 
     private void nextPage() {
@@ -84,35 +119,51 @@ public class TouchScreen {
     }
 
     private void setMenuLayout() {
-        //Action buttons will be at the bottom of the screen in a horizontal layout
-        HBox actionButtons = new HBox();
-        actionButtons.setSpacing(10);
-        actionButtons.setLayoutX(0);
-        actionButtons.setLayoutY(WINDOW_HEIGHT - 100);
-        //Create buttons
-//        Button volumeDown = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\volumeDown.png");
-//        Button volumeUp = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\162-1623769_volume-up-volume-up-icon.png");
-//        Button brightnessDown = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\brightnessDown.png");
-//        Button brightnessUp = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\brightnessUp.png");
-//        Button textSize = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\textSize.png");
-        //Add buttons to layout
-//        actionButtons.getChildren().addAll(volumeDown, volumeUp, brightnessDown, brightnessUp, textSize, languageMenu());
-        //Add layout to root
-        root.getChildren().add(actionButtons);
+        Menu menu = new Menu("Accessibility");
+
+        Menu audioMenu = new Menu("Audio Level");
+        MenuItem volumeInc = new MenuItem("Volume +1");
+        MenuItem volumeDec = new MenuItem("Volume -1");
+        volumeInc.setOnAction(e -> increaseVolume());
+        volumeDec.setOnAction(e -> decreaseVolume());
+        audioMenu.getItems().add(volumeInc);
+        audioMenu.getItems().add(volumeDec);
+
+        Menu textSizeMenu = new Menu("Text Size");
+        MenuItem textSizeInc = new MenuItem("Text Size +1");
+        MenuItem textSizeDec = new MenuItem("Text Size -1");
+        textSizeInc.setOnAction(e -> increaseTextSize());
+        textSizeDec.setOnAction(e -> decreaseTextSize());
+        textSizeMenu.getItems().add(textSizeInc);
+        textSizeMenu.getItems().add(textSizeDec);
+
+        Menu brightnessMenu = new Menu("Brightness");
+        MenuItem brightnessInc = new MenuItem("Brightness +1");
+        MenuItem brightnessDec = new MenuItem("Brightness -1");
+        brightnessInc.setOnAction(e -> increaseBrightness());
+        brightnessDec.setOnAction(e -> decreaseBrightness());
+        brightnessMenu.getItems().add(brightnessInc);
+        brightnessMenu.getItems().add(brightnessDec);
+
+        Menu languageMenu = new Menu("Language");
+        MenuItem english = new MenuItem("English");
+        MenuItem spanish = new MenuItem("Spanish");
+        MenuItem mandarin = new MenuItem("Mandarin");
+        english.setOnAction(e -> changeLanguage("English"));
+        spanish.setOnAction(e -> changeLanguage("Spanish"));
+        mandarin.setOnAction(e -> changeLanguage("Mandarin"));
+        languageMenu.getItems().add(english);
+        languageMenu.getItems().add(spanish);
+        languageMenu.getItems().add(mandarin);
+
+        menu.getItems().add(textSizeMenu);
+        menu.getItems().add(brightnessMenu);
+        menu.getItems().add(languageMenu);
+
+        MenuBar menuBar = new MenuBar(menu);
+        root.getChildren().add(menuBar);
     }
 
-    private MenuButton languageMenu() {
-        //Languages may need to be changed from this list
-        String[] languages = {"English", "Spanish", "French", "German", "Italian", "Portuguese", "Russian", "Chinese"};
-        MenuButton language = new MenuButton("Language");
-        for (String lang : languages) {
-            MenuItem languageItem = new MenuItem(lang);
-            languageItem.setOnAction(e -> changeLanguage());
-            language.getItems().add(languageItem);
-        }
-        language.setPrefHeight(50);
-        return language;
-    }
 
     private Button createButtonWithImage(String pathToImage) {
         Image image = new Image(pathToImage);
