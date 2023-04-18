@@ -90,13 +90,13 @@ public class TouchScreen {
         actionButtons.setLayoutX(0);
         actionButtons.setLayoutY(WINDOW_HEIGHT - 100);
         //Create buttons
-        Button volumeDown = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\volumeDown.png");
-        Button volumeUp = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\162-1623769_volume-up-volume-up-icon.png");
-        Button brightnessDown = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\brightnessDown.png");
-        Button brightnessUp = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\brightnessUp.png");
-        Button textSize = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\textSize.png");
+//        Button volumeDown = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\volumeDown.png");
+//        Button volumeUp = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\162-1623769_volume-up-volume-up-icon.png");
+//        Button brightnessDown = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\brightnessDown.png");
+//        Button brightnessUp = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\brightnessUp.png");
+//        Button textSize = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\textSize.png");
         //Add buttons to layout
-        actionButtons.getChildren().addAll(volumeDown, volumeUp, brightnessDown, brightnessUp, textSize, languageMenu());
+//        actionButtons.getChildren().addAll(volumeDown, volumeUp, brightnessDown, brightnessUp, textSize, languageMenu());
         //Add layout to root
         root.getChildren().add(actionButtons);
     }
