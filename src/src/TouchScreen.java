@@ -16,6 +16,7 @@ public class TouchScreen {
     private static int brightnessLevel;
     private static String masterLanguage;
     private static int textSizeLevel;
+    private VirtualKeyboard keyboard = new VirtualKeyboard();
 
     private Group root;
     private Scene scene;
@@ -148,7 +149,7 @@ public class TouchScreen {
 
         // TEST: Give questions
         displayQuestion();
-
+        addVirtualKeyboardToRoot();
         //set scene
         scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
@@ -212,6 +213,10 @@ public class TouchScreen {
         Button buttonWithImage = new Button();
         buttonWithImage.setGraphic(imageView);
         return buttonWithImage;
+    }
+
+    private void addVirtualKeyboardToRoot() {
+        root.getChildren().add(keyboard);
     }
 
 
