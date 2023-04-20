@@ -219,7 +219,4 @@ public class TouchScreen {
         root.getChildren().add(keyboard);
     }
 
-
-
-
 }
