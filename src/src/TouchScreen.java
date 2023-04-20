@@ -1,24 +1,30 @@
-import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 
 public class TouchScreen {
     private final double WINDOW_WIDTH = 800;
     private final double WINDOW_HEIGHT = 600;
-    private Button audioBtn;
-    private Button brightnessBtn;
-    private Button languageBtn;
-    private Button textSizeBtn;
+    private static int brightnessLevel;
+    private static String masterLanguage;
+    private static int textSizeLevel;
+
     private Group root;
     private Scene scene;
     public TouchScreen() {
+        // Default levels
+        brightnessLevel = 5;
+        masterLanguage = "English";
+        textSizeLevel = 5;
+
         this.root = new Group();
         setScene();
     }
@@ -31,28 +37,91 @@ public class TouchScreen {
 
     }
 
-    private void changeVolume() {
+    private void increaseBrightness() {
+        if(brightnessLevel < 10){brightnessLevel += 1;}
+        System.out.println("New Brightness Level " + brightnessLevel);
 
     }
-
-    private void changeBrightness() {
-
+    private void decreaseBrightness(){
+        if(brightnessLevel > 0){brightnessLevel -= 1;}
+        System.out.println("New Brightness Level " + brightnessLevel);
     }
 
-    private void changeTextSize() {
+    private void increaseTextSize() {
+        if(textSizeLevel < 10){textSizeLevel += 1;}
+        System.out.println("New Text Size " + textSizeLevel);
 
     }
+    private void decreaseTextSize(){
+        if(textSizeLevel > 0){textSizeLevel -= 1;}
+        System.out.println("New Text Size " + textSizeLevel);
+    }
 
-    private void changeLanguage() {
+    /**
+     * TODO: This is called "displayLanguage()" in SRS
+     */
+    private void changeLanguage(String language) {
+        masterLanguage = language;
+        System.out.println("New Master Language " + masterLanguage);
+    }
 
+    /**
+     * TODO: Give this function args (promptString, choices[], etc.) from
+     *   some type of "Items obj". Then just insert each arg in it's respective
+     *   HBox below.
+     */
+    private void displayQuestion(){
+        // TODO: Right here would be a perfect location to translate
+        //  everything before putting them into their HBoxes :)
+
+        int numOpts = 3;  // Creates n-many option choices, not including write-in
+        int xPos = 300;  // Aligning
+        int yPos = 200;  // Aligning
+
+        // TODO: Add ID's to each thingy...how should ID's be formatted?
+        // 1. Prompt
+        HBox promptBox = new HBox();
+        promptBox.getChildren().add(new Text("This is a prompt..."));  // Fluff
+        promptBox.setTranslateX(promptBox.getTranslateX() + xPos);
+        promptBox.setTranslateY(promptBox.getTranslateY() + yPos);
+        promptBox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
+        promptBox.setPadding(new Insets(10));
+        yPos += 50;
+
+        // 2. Choices
+        HBox[] choices = new HBox[numOpts];
+        for(int i = 0; i < numOpts; i++){
+            choices[i] = new HBox();
+            choices[i].getChildren().add(new Text("Answer Choice " + i));  // Fluff
+            choices[i].setTranslateX(choices[i].getTranslateX() + xPos);
+            choices[i].setTranslateY(choices[i].getTranslateY() + yPos);
+            choices[i].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
+            choices[i].setPadding(new Insets(10));
+
+            yPos += 50;  // Slides box down +50 pixels
+        }
+
+        // 3. Write-in
+        HBox writeIn = new HBox();
+        writeIn.getChildren().add(new Text("Write-in Field..."));  // Fluff
+        writeIn.setTranslateX(writeIn.getTranslateX() + xPos);
+        writeIn.setTranslateY(writeIn.getTranslateY() + yPos);
+        writeIn.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
+        writeIn.setPadding(new Insets(10));
+
+        // 4. Add questionnaire to GUI display.
+        root.getChildren().addAll(promptBox, writeIn);
+        for(Node c : choices){
+            root.getChildren().add(c);
+        }
     }
 
     private void nextPage() {
-
+        displayQuestion();
     }
 
     private void previousPage() {
-
+        displayQuestion();
     }
 
     private void spoilBallot() {
@@ -75,7 +144,11 @@ public class TouchScreen {
 
     private void setScene() {
         //fill root with layout
-        setMenuLayout();
+        setAccessibilityLayout();
+
+        // TEST: Give questions
+        displayQuestion();
+
         //set scene
         scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
@@ -83,35 +156,52 @@ public class TouchScreen {
         return scene;
     }
 
-    private void setMenuLayout() {
-        //Action buttons will be at the bottom of the screen in a horizontal layout
-        HBox actionButtons = new HBox();
-        actionButtons.setSpacing(10);
-        actionButtons.setLayoutX(0);
-        actionButtons.setLayoutY(WINDOW_HEIGHT - 100);
-        //Create buttons
-        Button volumeDown = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\volumeDown.png");
-        Button volumeUp = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\162-1623769_volume-up-volume-up-icon.png");
-        Button brightnessDown = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\brightnessDown.png");
-        Button brightnessUp = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\brightnessUp.png");
-        Button textSize = createButtonWithImage("C:\\Users\\Chai\\Documents\\VotingMachine\\src\\Images\\textSize.png");
-        //Add buttons to layout
-        actionButtons.getChildren().addAll(volumeDown, volumeUp, brightnessDown, brightnessUp, textSize, languageMenu());
-        //Add layout to root
-        root.getChildren().add(actionButtons);
-    }
+    private void setAccessibilityLayout() {
+        Menu menu = new Menu("Accessibility");
 
-    private MenuButton languageMenu() {
-        //Languages may need to be changed from this list
-        String[] languages = {"English", "Spanish", "French", "German", "Italian", "Portuguese", "Russian", "Chinese"};
-        MenuButton language = new MenuButton("Language");
-        for (String lang : languages) {
-            MenuItem languageItem = new MenuItem(lang);
-            languageItem.setOnAction(e -> changeLanguage());
-            language.getItems().add(languageItem);
-        }
-        language.setPrefHeight(50);
-        return language;
+        Menu audioMenu = new Menu("Audio Level");
+        MenuItem volumeInc = new MenuItem("Volume +1");
+        MenuItem volumeDec = new MenuItem("Volume -1");
+        volumeInc.setOnAction(e -> Audio.increaseVolume());
+        volumeDec.setOnAction(e -> Audio.decreaseVolume());
+        audioMenu.getItems().add(volumeInc);
+        audioMenu.getItems().add(volumeDec);
+
+        Menu textSizeMenu = new Menu("Text Size");
+        MenuItem textSizeInc = new MenuItem("Text Size +1");
+        MenuItem textSizeDec = new MenuItem("Text Size -1");
+        textSizeInc.setOnAction(e -> increaseTextSize());
+        textSizeDec.setOnAction(e -> decreaseTextSize());
+        textSizeMenu.getItems().add(textSizeInc);
+        textSizeMenu.getItems().add(textSizeDec);
+
+        Menu brightnessMenu = new Menu("Brightness");
+        MenuItem brightnessInc = new MenuItem("Brightness +1");
+        MenuItem brightnessDec = new MenuItem("Brightness -1");
+        brightnessInc.setOnAction(e -> increaseBrightness());
+        brightnessDec.setOnAction(e -> decreaseBrightness());
+        brightnessMenu.getItems().add(brightnessInc);
+        brightnessMenu.getItems().add(brightnessDec);
+
+        Menu languageMenu = new Menu("Language");
+        MenuItem english = new MenuItem("English");
+        MenuItem spanish = new MenuItem("Spanish");
+        MenuItem mandarin = new MenuItem("Mandarin");
+        english.setOnAction(e -> changeLanguage("English"));
+        spanish.setOnAction(e -> changeLanguage("Spanish"));
+        mandarin.setOnAction(e -> changeLanguage("Mandarin"));
+        languageMenu.getItems().add(english);
+        languageMenu.getItems().add(spanish);
+        languageMenu.getItems().add(mandarin);
+
+        menu.getItems().add(textSizeMenu);
+        menu.getItems().add(brightnessMenu);
+        menu.getItems().add(languageMenu);
+
+        MenuBar menuBar = new MenuBar(menu);
+        menuBar.setTranslateX(menuBar.getTranslateX() + 600);
+        menuBar.setTranslateY(menuBar.getLayoutY() + 40);
+        root.getChildren().add(menuBar);
     }
 
     private Button createButtonWithImage(String pathToImage) {
