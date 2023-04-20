@@ -16,7 +16,7 @@ public class TouchScreen {
     private static int brightnessLevel;
     private static String masterLanguage;
     private static int textSizeLevel;
-    private VirtualKeyboard keyboard = new VirtualKeyboard();
+    private VirtualKeypad keyboard = new VirtualKeypad();
 
     private Group root;
     private Scene scene;
