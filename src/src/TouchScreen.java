@@ -3,11 +3,13 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 public class TouchScreen {
@@ -17,16 +19,21 @@ public class TouchScreen {
     private static String masterLanguage;
     private static int textSizeLevel;
     private VirtualKeypad keyboard = new VirtualKeypad();
+    ColorAdjust colorAdjust;
+    Rectangle background = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
 
     private Group root;
     private Scene scene;
     public TouchScreen() {
         // Default levels
-        brightnessLevel = 5;
+        this.colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(0.0);
         masterLanguage = "English";
         textSizeLevel = 5;
-
+        Rectangle background = new Rectangle(WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
         this.root = new Group();
+        this.root.getChildren().add(background);
         setScene();
     }
 
@@ -39,13 +46,16 @@ public class TouchScreen {
     }
 
     private void increaseBrightness() {
-        if(brightnessLevel < 10){brightnessLevel += 1;}
-        System.out.println("New Brightness Level " + brightnessLevel);
-
+        colorAdjust.setBrightness(this.colorAdjust.getBrightness() + 0.1);
+        System.out.println("New Brightness Level " + colorAdjust.getBrightness());
+        root.setEffect(colorAdjust);
+        background.setEffect(colorAdjust);
     }
     private void decreaseBrightness(){
-        if(brightnessLevel > 0){brightnessLevel -= 1;}
-        System.out.println("New Brightness Level " + brightnessLevel);
+        colorAdjust.setBrightness(this.colorAdjust.getBrightness() - 0.1);
+        System.out.println("New Brightness Level " + colorAdjust.getBrightness());
+        root.setEffect(colorAdjust);
+        background.setEffect(colorAdjust);
     }
 
     private void increaseTextSize() {
@@ -112,7 +122,10 @@ public class TouchScreen {
 
         // 4. Add questionnaire to GUI display.
         root.getChildren().addAll(promptBox, writeIn);
+        promptBox.setEffect(colorAdjust);
+        writeIn.setEffect(colorAdjust);
         for(Node c : choices){
+            c.setEffect(colorAdjust);
             root.getChildren().add(c);
         }
     }
@@ -146,7 +159,6 @@ public class TouchScreen {
     private void setScene() {
         //fill root with layout
         setAccessibilityLayout();
-
         // TEST: Give questions
         displayQuestion();
         addVirtualKeyboardToRoot();
