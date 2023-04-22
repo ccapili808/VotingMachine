@@ -1,4 +1,7 @@
 public class Proposition {
+    /**
+     * For the proposition type of votes
+     */
     private String propDescription;
     private String propName;
     private String option;

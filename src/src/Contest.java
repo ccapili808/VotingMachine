@@ -1,6 +1,9 @@
 import java.util.HashMap;
 
 public class Contest {
+    /**
+     * Normal vote with contestName and list of candidates
+     */
     private String contestName;
     private HashMap<String, String> contestCandidates;
     private boolean writeIn;
