@@ -1,11 +1,13 @@
+import java.util.List;
+
 public class Proposition {
     /**
      * For the proposition type of votes
      */
     private String propDescription;
     private String propName;
-    private String option;
-    public Proposition (String propDescription, String propName, String option) {
+    private List<String> option;
+    public Proposition (String propDescription, String propName, List<String> option) {
         this.propDescription = propDescription;
         this.propName = propName;
         this.option = option;
@@ -27,11 +29,11 @@ public class Proposition {
         this.propName = propName;
     }
 
-    public String getOption() {
+    public List<String> getOption() {
         return option;
     }
 
-    public void setOption(String option) {
+    public void setOption(List<String> option) {
         this.option = option;
     }
 }

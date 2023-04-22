@@ -1,5 +1,8 @@
+import java.util.List;
+
 public class Sections {
     private String sectionName;
+    private List<Contest> sectionContests;
     public Sections (String sectionName) {
         this.sectionName = sectionName;
     }

@@ -1,7 +1,5 @@
 import java.beans.PropertyVetoException;
-import java.io.IOException;
 import java.util.Locale;
-import java.util.jar.JarEntry;
 import javax.speech.Central;
 import javax.speech.EngineException;
 import javax.speech.synthesis.Synthesizer;

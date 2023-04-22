@@ -1,13 +1,14 @@
 import java.util.HashMap;
+import java.util.List;
 
 public class Contest {
     /**
      * Normal vote with contestName and list of candidates
      */
     private String contestName;
-    private HashMap<String, String> contestCandidates;
+    private List<Candidates> contestCandidates;
     private boolean writeIn;
-    public Contest (String contestName, HashMap<String, String> contestCandidates, boolean writeIn) {
+    public Contest (String contestName, List<Candidates> contestCandidates, boolean writeIn) {
         this.contestName = contestName;
         this.contestCandidates = contestCandidates;
         this.writeIn = writeIn;
@@ -29,11 +30,11 @@ public class Contest {
         this.writeIn = writeIn;
     }
 
-    public HashMap<String, String> getContestCandidates() {
+    public List<Candidates> getContestCandidates() {
         return contestCandidates;
     }
 
-    public void setContestCandidates(HashMap<String, String> contestCandidates) {
+    public void setContestCandidates(List<Candidates> contestCandidates) {
         this.contestCandidates = contestCandidates;
     }
 }
