@@ -1,10 +1,7 @@
-import java.util.HashMap;
-import java.util.List;
-
-public class Approvals {
+public class Approval {
     private String approvalName;
-    private List<Candidates> approvalCandidates;
-    public Approvals (String approvalName, List<Candidates> candidatesList) {
+    private Candidates approvalCandidates;
+    public Approval (String approvalName, Candidates candidatesList) {
         this.approvalName = approvalName;
         this.approvalCandidates = candidatesList;
     }
@@ -17,11 +14,12 @@ public class Approvals {
         this.approvalName = approvalName;
     }
 
-    public List<Candidates> getApprovalCandidates() {
+
+    public Candidates getApprovalCandidates() {
         return approvalCandidates;
     }
 
-    public void setApprovalCandidates(List<Candidates> approvalCandidates) {
+    public void setApprovalCandidates(Candidates approvalCandidates) {
         this.approvalCandidates = approvalCandidates;
     }
 }

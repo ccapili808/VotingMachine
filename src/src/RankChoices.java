@@ -3,8 +3,8 @@ import java.util.List;
 
 public class RankChoices {
     private String rankedChoiceName;
-    private List<Candidates> rackChoiceCandidates;
-    public RankChoices (String rankedChoiceName, List<Candidates> candidatesList) {
+    private Candidates rackChoiceCandidates;
+    public RankChoices (String rankedChoiceName, Candidates candidatesList) {
         this.rankedChoiceName = rankedChoiceName;
         this.rackChoiceCandidates = candidatesList;
     }
@@ -17,11 +17,12 @@ public class RankChoices {
         this.rankedChoiceName = rankedChoiceName;
     }
 
-    public List<Candidates> getCandidatesList() {
+
+    public Candidates getRackChoiceCandidates() {
         return rackChoiceCandidates;
     }
 
-    public void setCandidatesList(List<Candidates> candidatesList) {
-        this.rackChoiceCandidates = candidatesList;
+    public void setRackChoiceCandidates(Candidates rackChoiceCandidates) {
+        this.rackChoiceCandidates = rackChoiceCandidates;
     }
 }

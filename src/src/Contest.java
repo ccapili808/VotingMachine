@@ -6,9 +6,9 @@ public class Contest {
      * Normal vote with contestName and list of candidates
      */
     private String contestName;
-    private List<Candidates> contestCandidates;
+    private Candidates contestCandidates;
     private boolean writeIn;
-    public Contest (String contestName, List<Candidates> contestCandidates, boolean writeIn) {
+    public Contest (String contestName, Candidates contestCandidates, boolean writeIn) {
         this.contestName = contestName;
         this.contestCandidates = contestCandidates;
         this.writeIn = writeIn;
@@ -30,11 +30,12 @@ public class Contest {
         this.writeIn = writeIn;
     }
 
-    public List<Candidates> getContestCandidates() {
+
+    public Candidates getContestCandidates() {
         return contestCandidates;
     }
 
-    public void setContestCandidates(List<Candidates> contestCandidates) {
+    public void setContestCandidates(Candidates contestCandidates) {
         this.contestCandidates = contestCandidates;
     }
 }

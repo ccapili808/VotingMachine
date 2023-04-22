@@ -1,8 +1,13 @@
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Sections {
     private String sectionName;
-    private List<Contest> sectionContests;
+    private ArrayList<Contest> sectionContests;
+    private ArrayList<Approval> sectionApprovals;
+    private ArrayList<RankChoices> sectionRankChoices;
+    private ArrayList<Proposition> sectionProposition;
     public Sections (String sectionName) {
         this.sectionName = sectionName;
     }
