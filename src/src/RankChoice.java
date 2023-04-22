@@ -1,10 +1,7 @@
-import java.util.HashMap;
-import java.util.List;
-
-public class RankChoices {
+public class RankChoice {
     private String rankedChoiceName;
     private Candidates rackChoiceCandidates;
-    public RankChoices (String rankedChoiceName, Candidates candidatesList) {
+    public RankChoice(String rankedChoiceName, Candidates candidatesList) {
         this.rankedChoiceName = rankedChoiceName;
         this.rackChoiceCandidates = candidatesList;
     }

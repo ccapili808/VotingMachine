@@ -3,7 +3,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         TouchScreen touchScreen = new TouchScreen();
@@ -71,8 +70,9 @@ public class Main extends Application {
      * validPriStorage, validBackStorage, validSetupStorage return true.
      * If any of these functions return false, then the setup failed, and this function should return false.
      */
-    public void validSetup() {
-
+    public boolean validSetup() {
+        return true;
+        //return (storage.validPriStorage && storage.validBackStorage && storage.validSetupStorage);
     }
 
     /**
