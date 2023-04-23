@@ -3,13 +3,11 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 public class TouchScreen {
@@ -19,21 +17,16 @@ public class TouchScreen {
     private static String masterLanguage;
     private static int textSizeLevel;
     private VirtualKeypad keyboard = new VirtualKeypad();
-    ColorAdjust colorAdjust;
-    Rectangle background = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-
 
     private Group root;
     private Scene scene;
     public TouchScreen() {
         // Default levels
-        this.colorAdjust = new ColorAdjust();
-        colorAdjust.setBrightness(0.0);
+        brightnessLevel = 5;
         masterLanguage = "English";
         textSizeLevel = 5;
-        Rectangle background = new Rectangle(WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
+
         this.root = new Group();
-        this.root.getChildren().add(background);
         setScene();
     }
 
@@ -46,16 +39,13 @@ public class TouchScreen {
     }
 
     private void increaseBrightness() {
-        colorAdjust.setBrightness(this.colorAdjust.getBrightness() + 0.1);
-        System.out.println("New Brightness Level " + colorAdjust.getBrightness());
-        root.setEffect(colorAdjust);
-        background.setEffect(colorAdjust);
+        if(brightnessLevel < 10){brightnessLevel += 1;}
+        System.out.println("New Brightness Level " + brightnessLevel);
+
     }
     private void decreaseBrightness(){
-        colorAdjust.setBrightness(this.colorAdjust.getBrightness() - 0.1);
-        System.out.println("New Brightness Level " + colorAdjust.getBrightness());
-        root.setEffect(colorAdjust);
-        background.setEffect(colorAdjust);
+        if(brightnessLevel > 0){brightnessLevel -= 1;}
+        System.out.println("New Brightness Level " + brightnessLevel);
     }
 
     private void increaseTextSize() {
@@ -86,13 +76,13 @@ public class TouchScreen {
         //  everything before putting them into their HBoxes :)
 
         int numOpts = 3;  // Creates n-many option choices, not including write-in
-        int xPos = 300;  // Aligning
+        int xPos = 250;  // Aligning
         int yPos = 200;  // Aligning
 
         // TODO: Add ID's to each thingy...how should ID's be formatted?
         // 1. Prompt
         HBox promptBox = new HBox();
-        promptBox.getChildren().add(new Text("This is a prompt..."));  // Fluff
+        promptBox.getChildren().add(new Text("This is a prompt"));  // Fluff
         promptBox.setTranslateX(promptBox.getTranslateX() + xPos);
         promptBox.setTranslateY(promptBox.getTranslateY() + yPos);
         promptBox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
@@ -100,34 +90,32 @@ public class TouchScreen {
         yPos += 50;
 
         // 2. Choices
-        HBox[] choices = new HBox[numOpts];
+        RadioButton[] choices = new RadioButton[numOpts];
         for(int i = 0; i < numOpts; i++){
-            choices[i] = new HBox();
-            choices[i].getChildren().add(new Text("Answer Choice " + i));  // Fluff
-            choices[i].setTranslateX(choices[i].getTranslateX() + xPos);
-            choices[i].setTranslateY(choices[i].getTranslateY() + yPos);
-            choices[i].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
-            choices[i].setPadding(new Insets(10));
+            choices[i] = new RadioButton("Answer Choice " + i);  // Fluff
+            choices[i] = applyGUIFormat(choices[i], xPos, yPos);
 
             yPos += 50;  // Slides box down +50 pixels
         }
 
         // 3. Write-in
-        HBox writeIn = new HBox();
-        writeIn.getChildren().add(new Text("Write-in Field..."));  // Fluff
-        writeIn.setTranslateX(writeIn.getTranslateX() + xPos);
-        writeIn.setTranslateY(writeIn.getTranslateY() + yPos);
-        writeIn.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
-        writeIn.setPadding(new Insets(10));
+        RadioButton writeIn = new RadioButton("Write-in Field");  // Fluff
+        writeIn = applyGUIFormat(writeIn, xPos, yPos);
 
         // 4. Add questionnaire to GUI display.
         root.getChildren().addAll(promptBox, writeIn);
-        promptBox.setEffect(colorAdjust);
-        writeIn.setEffect(colorAdjust);
         for(Node c : choices){
-            c.setEffect(colorAdjust);
             root.getChildren().add(c);
         }
+    }
+
+    private RadioButton applyGUIFormat(RadioButton rb, int xPos, int yPos){
+        rb.setTranslateX(rb.getTranslateX() + xPos);
+        rb.setTranslateY(rb.getTranslateY() + yPos);
+        rb.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
+        rb.setPadding(new Insets(10));
+
+        return rb;
     }
 
     private void nextPage() {
@@ -159,6 +147,7 @@ public class TouchScreen {
     private void setScene() {
         //fill root with layout
         setAccessibilityLayout();
+
         // TEST: Give questions
         displayQuestion();
         addVirtualKeyboardToRoot();
