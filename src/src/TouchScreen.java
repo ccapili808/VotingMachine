@@ -1,3 +1,6 @@
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventTarget;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -6,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -41,11 +45,26 @@ public class TouchScreen {
         setScene();
     }
 
-    private void select() {
+    /**
+     * Activates the Radio Button when we press on a HBox (or it's text)
+     * @param e
+     */
+    private void select(MouseEvent e) {
+        RadioButton rb;
 
+        EventTarget target = e.getTarget();
+        if(target instanceof HBox){
+            HBox choice = (HBox) target;
+            rb = (RadioButton) choice.getChildren().get(0);
+        }else{
+            Text text = (Text) target;
+            rb = (RadioButton) text.getParent().getChildrenUnmodifiable().get(0);
+        }
+
+        rb.setSelected(true);
     }
 
-    private void deselect() {
+    private void deselect(MouseEvent e) {
 
     }
 
@@ -100,9 +119,17 @@ public class TouchScreen {
         // TODO: Right here would be a perfect location to translate
         //  everything before putting them into their HBoxes :)
 
-        int numOpts = 3;  // Creates n-many option choices, not including write-in
+        int numOpts = 3+1;  // Creates n-many option choices, including write-in
         int xPos = 300;  // Aligning
         int yPos = 200;  // Aligning
+
+        // This piece of code responsible for automatically changing radio btn selection
+        ToggleGroup toggleGroup = new ToggleGroup();
+        toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> observable,
+                                Toggle oldValue, Toggle newValue) {}
+        });
 
         // TODO: Add ID's to each thingy...how should ID's be formatted?
         // 1. Prompt
@@ -117,25 +144,31 @@ public class TouchScreen {
         yPos += 50;
 
         // 2. Choices
-        RadioButton[] choices = new RadioButton[numOpts+1];
-        for(int i = 0; i < numOpts; i++){
-            choices[i] = new RadioButton();
-            Text text = new Text("Answer Choice " + i);  // Create Text Obj
+        HBox[] choices = new HBox[numOpts];
+        for(int i = 0; i < numOpts-1; i++){
+            RadioButton rb = new RadioButton();
+            rb.setToggleGroup(toggleGroup);
+
+            choices[i] = new HBox(rb);
+            Text text = new Text("\t" + "Answer Choice " + i);
             choices[i] = setGUIFormat(choices[i], text, xPos, yPos);
+            choices[i].setOnMousePressed(this::select);
             yPos += 50;  // Slides box down +50 pixels
         }
 
         // 3. Write-in
-        RadioButton writeIn = new RadioButton();
-        Text writeInText = new Text("Write-in Field...");  // Create Text Obj
+        RadioButton rb = new RadioButton();
+        rb.setToggleGroup(toggleGroup);
+        HBox writeIn = new HBox(rb);
+        Text writeInText = new Text("\t" + "Write-in Field...");
         writeIn = setGUIFormat(writeIn, writeInText, xPos, yPos);
+        writeIn.setOnMousePressed(this::select);
 
-
-        // 4. Set Actions on each radio button
+        // 4. Set Actions
         choices[choices.length-1] = writeIn;
         choiceOnClick(choices);
 
-        // 4. Add questionnaire to GUI display.
+        // 5. Add to GUI display.
         root.getChildren().addAll(promptBox);
         for(Node c : choices){
             root.getChildren().add(c);
@@ -144,21 +177,21 @@ public class TouchScreen {
 
     /**
      * Used for Answer Choices
-     * @param rb Radio Button
+     * @param choice Radio Button
      * @param textField text inside radio button
      * @param xPos x-position
      * @param yPos y-position
      * @return
      */
-    private RadioButton setGUIFormat(RadioButton rb, Text textField, int xPos, int yPos){
+    private HBox setGUIFormat(HBox choice, Text textField, int xPos, int yPos){
         textList.add(textField);
-        rb.setText(textField.getText());  // Add Text Obj
-        rb.setTranslateX(rb.getTranslateX() + xPos);
-        rb.setTranslateY(rb.getTranslateY() + yPos);
-        rb.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
-        rb.setPadding(new Insets(10));
+        choice.getChildren().add(textField);
+        choice.setTranslateX(choice.getTranslateX() + xPos);
+        choice.setTranslateY(choice.getTranslateY() + yPos);
+        choice.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
+        choice.setPadding(new Insets(10));
 
-        return rb;
+        return choice;
     }
 
     private void nextPage() {
@@ -280,11 +313,11 @@ public class TouchScreen {
         root.getChildren().add(keyboard);
     }
 
-    private static void choiceOnClick(RadioButton[] choices) {
+    private static void choiceOnClick(HBox[] choices) {
         //turn the selected choice's background to green and the rest to white
-        for (RadioButton choice : choices) {
+        for (HBox choice : choices) {
             choice.setOnMouseClicked(e -> {
-                for (RadioButton c : choices) {
+                for (HBox c : choices) {
                     c.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
                 }
                 choice.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
