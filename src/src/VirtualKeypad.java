@@ -78,4 +78,14 @@ public class VirtualKeypad extends VBox {
         this.setTranslateX(this.getTranslateX() + 200);
         this.setTranslateY(this.getTranslateY() + 500);
     }
+
+    public void showKeyboard(boolean visible){
+        this.setVisible(visible);
+    }
+
+    public void hideKeyboard(){
+        this.setVisible(false);
+    }
+
+
 }
