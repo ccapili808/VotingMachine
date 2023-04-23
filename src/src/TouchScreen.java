@@ -1,6 +1,3 @@
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventTarget;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -9,9 +6,9 @@ import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -20,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TouchScreen {
-    private final double WINDOW_WIDTH = 1000;
+    private final double WINDOW_WIDTH = 800;
     private final double WINDOW_HEIGHT = 600;
     private static int brightnessLevel;
     private static String masterLanguage;
@@ -45,26 +42,11 @@ public class TouchScreen {
         setScene();
     }
 
-    /**
-     * Activates the Radio Button when we press on a HBox (or it's text)
-     * @param e
-     */
-    private void select(MouseEvent e) {
-        RadioButton rb;
+    private void select() {
 
-        EventTarget target = e.getTarget();
-        if(target instanceof HBox){
-            HBox choice = (HBox) target;
-            rb = (RadioButton) choice.getChildren().get(0);
-        }else{
-            Text text = (Text) target;
-            rb = (RadioButton) text.getParent().getChildrenUnmodifiable().get(0);
-        }
-
-        rb.setSelected(true);
     }
 
-    private void deselect(MouseEvent e) {
+    private void deselect() {
 
     }
 
@@ -119,17 +101,9 @@ public class TouchScreen {
         // TODO: Right here would be a perfect location to translate
         //  everything before putting them into their HBoxes :)
 
-        int numOpts = 3+1;  // Creates n-many option choices, including write-in
+        int numOpts = 3;  // Creates n-many option choices, not including write-in
         int xPos = 300;  // Aligning
         int yPos = 200;  // Aligning
-
-        // This piece of code responsible for automatically changing radio btn selection
-        ToggleGroup toggleGroup = new ToggleGroup();
-        toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> observable,
-                                Toggle oldValue, Toggle newValue) {}
-        });
 
         // TODO: Add ID's to each thingy...how should ID's be formatted?
         // 1. Prompt
@@ -142,66 +116,44 @@ public class TouchScreen {
         promptBox.setPadding(new Insets(10));
         textList.add(prompt);
         yPos += 50;
-
         // 2. Choices
         HBox[] choices = new HBox[numOpts];
-        for(int i = 0; i < numOpts-1; i++){
-            RadioButton rb = new RadioButton();
-            rb.setToggleGroup(toggleGroup);
-
-            choices[i] = new HBox(rb);
-            Text text = new Text("\t" + "Answer Choice " + i);
-            choices[i] = setGUIFormat(choices[i], text, xPos, yPos);
-            choices[i].setOnMousePressed(this::select);
+        for(int i = 0; i < numOpts; i++){
+            choices[i] = new HBox();
+            Text text = new Text("Answer Choice " + i);
+            textList.add(text);
+            choices[i].getChildren().add(text);  // Fluff
+            choices[i].setTranslateX(choices[i].getTranslateX() + xPos);
+            choices[i].setTranslateY(choices[i].getTranslateY() + yPos);
+            choices[i].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
+            choices[i].setPadding(new Insets(10));
             yPos += 50;  // Slides box down +50 pixels
         }
-
-        // 3. Write-in
-        RadioButton rb = new RadioButton();
-        rb.setToggleGroup(toggleGroup);
-        HBox writeIn = new HBox(rb);
-        Text writeInText = new Text("\t" + "Write-in Field...");
-        writeIn = setGUIFormat(writeIn, writeInText, xPos, yPos);
-        writeIn.setOnMousePressed(this::select);
-
-        // 4. Set Actions
-        choices[choices.length-1] = writeIn;
         choiceOnClick(choices);
 
-        // 5. Add to GUI display.
-        root.getChildren().addAll(promptBox);
+        // 3. Write-in
+        HBox writeIn = new HBox();
+        Text writeInText = new Text("Write-in Field...");
+        textList.add(writeInText);
+        writeIn.getChildren().add(writeInText);  // Fluff
+        writeIn.setTranslateX(writeIn.getTranslateX() + xPos);
+        writeIn.setTranslateY(writeIn.getTranslateY() + yPos);
+        writeIn.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
+        writeIn.setPadding(new Insets(10));
+
+        // 4. Add questionnaire to GUI display.
+        root.getChildren().addAll(promptBox, writeIn);
         for(Node c : choices){
             root.getChildren().add(c);
         }
     }
 
-    /**
-     * Used for Answer Choices
-     * @param choice Radio Button
-     * @param textField text inside radio button
-     * @param xPos x-position
-     * @param yPos y-position
-     * @return
-     */
-    private HBox setGUIFormat(HBox choice, Text textField, int xPos, int yPos){
-        textList.add(textField);
-        choice.getChildren().add(textField);
-        choice.setTranslateX(choice.getTranslateX() + xPos);
-        choice.setTranslateY(choice.getTranslateY() + yPos);
-        choice.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
-        choice.setPadding(new Insets(10));
-
-        return choice;
-    }
-
     private void nextPage() {
-        root.getChildren().clear();  // Clear GUI
-        setScene();  // Add GUI items
+        displayQuestion();
     }
 
     private void previousPage() {
-        root.getChildren().clear();  // Clear GUI
-        setScene();  // Add GUI items
+        displayQuestion();
     }
 
     private void spoilBallot() {
@@ -227,12 +179,9 @@ public class TouchScreen {
         setAccessibilityLayout();
         // TEST: Give questions
         displayQuestion();
-        setNextBackBtns();
         addVirtualKeyboardToRoot();
         //set scene
-        if(scene == null){
-            scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-        }
+        scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
     public Scene getScene() {
         return scene;
@@ -246,21 +195,24 @@ public class TouchScreen {
         MenuItem volumeDec = new MenuItem("Volume -1");
         volumeInc.setOnAction(e -> Audio.increaseVolume());
         volumeDec.setOnAction(e -> Audio.decreaseVolume());
-        audioMenu.getItems().addAll(volumeInc, volumeDec);
+        audioMenu.getItems().add(volumeInc);
+        audioMenu.getItems().add(volumeDec);
 
         Menu textSizeMenu = new Menu("Text Size");
         MenuItem textSizeInc = new MenuItem("Text Size +1");
         MenuItem textSizeDec = new MenuItem("Text Size -1");
         textSizeInc.setOnAction(e -> increaseTextSize());
         textSizeDec.setOnAction(e -> decreaseTextSize());
-        textSizeMenu.getItems().addAll(textSizeInc, textSizeDec);
+        textSizeMenu.getItems().add(textSizeInc);
+        textSizeMenu.getItems().add(textSizeDec);
 
         Menu brightnessMenu = new Menu("Brightness");
         MenuItem brightnessInc = new MenuItem("Brightness +1");
         MenuItem brightnessDec = new MenuItem("Brightness -1");
         brightnessInc.setOnAction(e -> increaseBrightness());
         brightnessDec.setOnAction(e -> decreaseBrightness());
-        brightnessMenu.getItems().addAll(brightnessInc, brightnessDec);
+        brightnessMenu.getItems().add(brightnessInc);
+        brightnessMenu.getItems().add(brightnessDec);
 
         Menu languageMenu = new Menu("Language");
         MenuItem english = new MenuItem("English");
@@ -269,34 +221,18 @@ public class TouchScreen {
         english.setOnAction(e -> changeLanguage("English"));
         spanish.setOnAction(e -> changeLanguage("Spanish"));
         mandarin.setOnAction(e -> changeLanguage("Mandarin"));
-        languageMenu.getItems().addAll(english, spanish, mandarin);
+        languageMenu.getItems().add(english);
+        languageMenu.getItems().add(spanish);
+        languageMenu.getItems().add(mandarin);
 
-        menu.getItems().addAll(textSizeMenu, brightnessMenu, languageMenu);
+        menu.getItems().add(textSizeMenu);
+        menu.getItems().add(brightnessMenu);
+        menu.getItems().add(languageMenu);
 
         MenuBar menuBar = new MenuBar(menu);
         menuBar.setTranslateX(menuBar.getTranslateX() + 600);
         menuBar.setTranslateY(menuBar.getLayoutY() + 40);
         root.getChildren().add(menuBar);
-    }
-
-    private void setNextBackBtns(){
-        Button nextBtn = new Button();
-        Text nextText = new Text("Next");
-        nextBtn.setText(nextText.getText());
-        textList.add(nextText);
-        nextBtn.setOnAction(e -> nextPage());
-        nextBtn.setTranslateX(nextBtn.getTranslateX() + 550);
-        nextBtn.setTranslateY(nextBtn.getTranslateY() + 300);
-
-        Button backBtn = new Button();
-        Text backText = new Text("Back");
-        backBtn.setText(backText.getText());
-        textList.add(backText);
-        backBtn.setOnAction(e -> previousPage());
-        backBtn.setTranslateX(backBtn.getTranslateX() + 150);
-        backBtn.setTranslateY(backBtn.getTranslateY() + 300);
-
-        root.getChildren().addAll(nextBtn, backBtn);
     }
 
     private Button createButtonWithImage(String pathToImage) {
