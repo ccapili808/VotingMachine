@@ -15,8 +15,7 @@ public class VirtualKeypad extends VBox {
         HBox row2 = createRow("asdfghjkl".toUpperCase(), false, true);
         HBox row3 = createRow("zxcvbnm".toUpperCase(), false, false);
         HBox row4 = spacebar();
-        this.setSpacing(5);
-        this.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        setGUIAttr();
         this.getChildren().addAll(textField, row1, row2, row3, row4);
     }
 
@@ -71,5 +70,12 @@ public class VirtualKeypad extends VBox {
 
     private void enterBtnPressed() {
         System.out.println(textField.getText());
+    }
+
+    private void setGUIAttr(){
+        this.setSpacing(5);
+        this.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        this.setTranslateX(this.getTranslateX() + 200);
+        this.setTranslateY(this.getTranslateY() + 500);
     }
 }

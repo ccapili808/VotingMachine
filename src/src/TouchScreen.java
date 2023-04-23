@@ -7,7 +7,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 public class TouchScreen {
@@ -19,6 +18,7 @@ public class TouchScreen {
     private VirtualKeypad keyboard = new VirtualKeypad();
 
     private Group root;
+    private ScrollPane scrollPane;
     private Scene scene;
     public TouchScreen() {
         // Default levels
@@ -79,7 +79,6 @@ public class TouchScreen {
         int xPos = 250;  // Aligning
         int yPos = 200;  // Aligning
 
-        // TODO: Add ID's to each thingy...how should ID's be formatted?
         // 1. Prompt
         HBox promptBox = new HBox();
         promptBox.getChildren().add(new Text("This is a prompt"));  // Fluff
@@ -94,7 +93,6 @@ public class TouchScreen {
         for(int i = 0; i < numOpts; i++){
             choices[i] = new RadioButton("Answer Choice " + i);  // Fluff
             choices[i] = applyGUIFormat(choices[i], xPos, yPos);
-
             yPos += 50;  // Slides box down +50 pixels
         }
 
@@ -119,11 +117,19 @@ public class TouchScreen {
     }
 
     private void nextPage() {
-        displayQuestion();
+        // Clear GUI
+        root.getChildren().clear();
+
+        // Add stuff to GUI
+        setScene();
     }
 
     private void previousPage() {
-        displayQuestion();
+        // Clear GUI
+        root.getChildren().clear();
+
+        // Add stuff to GUI
+        setScene();
     }
 
     private void spoilBallot() {
@@ -150,9 +156,12 @@ public class TouchScreen {
 
         // TEST: Give questions
         displayQuestion();
+        addNextBackBtns();
         addVirtualKeyboardToRoot();
-        //set scene
-        scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        //set scene, if scene not initialized yet.
+        if(scene == null){
+            scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        }
     }
     public Scene getScene() {
         return scene;
@@ -166,24 +175,21 @@ public class TouchScreen {
         MenuItem volumeDec = new MenuItem("Volume -1");
         volumeInc.setOnAction(e -> Audio.increaseVolume());
         volumeDec.setOnAction(e -> Audio.decreaseVolume());
-        audioMenu.getItems().add(volumeInc);
-        audioMenu.getItems().add(volumeDec);
+        audioMenu.getItems().addAll(volumeInc, volumeDec);
 
         Menu textSizeMenu = new Menu("Text Size");
         MenuItem textSizeInc = new MenuItem("Text Size +1");
         MenuItem textSizeDec = new MenuItem("Text Size -1");
         textSizeInc.setOnAction(e -> increaseTextSize());
         textSizeDec.setOnAction(e -> decreaseTextSize());
-        textSizeMenu.getItems().add(textSizeInc);
-        textSizeMenu.getItems().add(textSizeDec);
+        textSizeMenu.getItems().addAll(textSizeInc, textSizeDec);
 
         Menu brightnessMenu = new Menu("Brightness");
         MenuItem brightnessInc = new MenuItem("Brightness +1");
         MenuItem brightnessDec = new MenuItem("Brightness -1");
         brightnessInc.setOnAction(e -> increaseBrightness());
         brightnessDec.setOnAction(e -> decreaseBrightness());
-        brightnessMenu.getItems().add(brightnessInc);
-        brightnessMenu.getItems().add(brightnessDec);
+        brightnessMenu.getItems().addAll(brightnessInc, brightnessDec);
 
         Menu languageMenu = new Menu("Language");
         MenuItem english = new MenuItem("English");
@@ -192,18 +198,25 @@ public class TouchScreen {
         english.setOnAction(e -> changeLanguage("English"));
         spanish.setOnAction(e -> changeLanguage("Spanish"));
         mandarin.setOnAction(e -> changeLanguage("Mandarin"));
-        languageMenu.getItems().add(english);
-        languageMenu.getItems().add(spanish);
-        languageMenu.getItems().add(mandarin);
+        languageMenu.getItems().addAll(english, spanish, mandarin);
 
-        menu.getItems().add(textSizeMenu);
-        menu.getItems().add(brightnessMenu);
-        menu.getItems().add(languageMenu);
+        menu.getItems().addAll(textSizeMenu, brightnessMenu, languageMenu);
 
         MenuBar menuBar = new MenuBar(menu);
         menuBar.setTranslateX(menuBar.getTranslateX() + 600);
         menuBar.setTranslateY(menuBar.getLayoutY() + 40);
         root.getChildren().add(menuBar);
+    }
+
+    private void addNextBackBtns(){
+        Button nextBtn = new Button("Next");
+        nextBtn.setTranslateX(nextBtn.getTranslateX() + 250);
+        nextBtn.setOnAction(e -> nextPage());
+
+        Button backBtn = new Button("Back");
+        backBtn.setOnAction(e -> previousPage());
+
+        root.getChildren().addAll(nextBtn, backBtn);
     }
 
     private Button createButtonWithImage(String pathToImage) {
@@ -218,6 +231,10 @@ public class TouchScreen {
 
     private void addVirtualKeyboardToRoot() {
         root.getChildren().add(keyboard);
+    }
+
+    public void removeVirtualKeyboardFromRoot(){
+        root.getChildren().remove(keyboard);
     }
 
 }
