@@ -1,3 +1,6 @@
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventTarget;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -6,9 +9,9 @@ import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -42,8 +45,19 @@ public class TouchScreen {
         setScene();
     }
 
-    private void select() {
+    private void select(MouseEvent e) {
+        RadioButton rb;
 
+        EventTarget target = e.getTarget();
+        if(target instanceof HBox){
+            HBox choice = (HBox) target;
+            rb = (RadioButton) choice.getChildren().get(0);
+        }else{
+            Text text = (Text) target;
+            rb = (RadioButton) text.getParent().getChildrenUnmodifiable().get(0);
+        }
+
+        rb.setSelected(true);
     }
 
     private void deselect() {
@@ -101,6 +115,14 @@ public class TouchScreen {
         // TODO: Right here would be a perfect location to translate
         //  everything before putting them into their HBoxes :)
 
+        ToggleGroup toggleGroup = new ToggleGroup();
+        toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+
+            }
+        });
+
         int numOpts = 3;  // Creates n-many option choices, not including write-in
         int xPos = 300;  // Aligning
         int yPos = 200;  // Aligning
@@ -117,43 +139,67 @@ public class TouchScreen {
         textList.add(prompt);
         yPos += 50;
         // 2. Choices
-        HBox[] choices = new HBox[numOpts];
+        HBox[] choices = new HBox[numOpts+1];
         for(int i = 0; i < numOpts; i++){
             choices[i] = new HBox();
-            Text text = new Text("Answer Choice " + i);
-            textList.add(text);
-            choices[i].getChildren().add(text);  // Fluff
-            choices[i].setTranslateX(choices[i].getTranslateX() + xPos);
-            choices[i].setTranslateY(choices[i].getTranslateY() + yPos);
-            choices[i].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
-            choices[i].setPadding(new Insets(10));
+
+            RadioButton rb = new RadioButton();
+            rb.setToggleGroup(toggleGroup);
+            choices[i].getChildren().add(rb);
+            choices[i].setOnMousePressed(this::select);
+
+            Text text = new Text("\t" + "Answer Choice " + i);  // Create Text Obj
+            choices[i] = setGUIFormat(choices[i], text, xPos, yPos);
+
             yPos += 50;  // Slides box down +50 pixels
         }
-        choiceOnClick(choices);
 
         // 3. Write-in
         HBox writeIn = new HBox();
-        Text writeInText = new Text("Write-in Field...");
-        textList.add(writeInText);
-        writeIn.getChildren().add(writeInText);  // Fluff
-        writeIn.setTranslateX(writeIn.getTranslateX() + xPos);
-        writeIn.setTranslateY(writeIn.getTranslateY() + yPos);
-        writeIn.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
-        writeIn.setPadding(new Insets(10));
+        RadioButton rb = new RadioButton();
+        rb.setToggleGroup(toggleGroup);
+        writeIn.getChildren().add(rb);
+        writeIn.setOnMousePressed(this::select);
+        Text writeInText = new Text("\t" + "Write-in Field...");  // Create Text Obj
+        writeIn = setGUIFormat(writeIn, writeInText, xPos, yPos);
+
+
+        // 4. Set Actions on each radio button
+        choices[choices.length-1] = writeIn;
+        choiceOnClick(choices);
 
         // 4. Add questionnaire to GUI display.
-        root.getChildren().addAll(promptBox, writeIn);
+        root.getChildren().addAll(promptBox);
         for(Node c : choices){
             root.getChildren().add(c);
         }
     }
 
+    private HBox setGUIFormat(HBox hbox, Text textField, int xPos, int yPos) {
+        textList.add(textField);
+        hbox.getChildren().add(textField);
+        hbox.setTranslateX(hbox.getTranslateX() + xPos);
+        hbox.setTranslateY(hbox.getTranslateY() + yPos);
+        hbox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
+        hbox.setPadding(new Insets(10));
+
+        return hbox;
+    }
+
     private void nextPage() {
-        displayQuestion();
+        // Clear GUI
+        root.getChildren().clear();
+
+        // Add stuff to GUI
+        setScene();
     }
 
     private void previousPage() {
-        displayQuestion();
+        // Clear GUI
+        root.getChildren().clear();
+
+        // Add stuff to GUI
+        setScene();
     }
 
     private void spoilBallot() {
@@ -179,9 +225,12 @@ public class TouchScreen {
         setAccessibilityLayout();
         // TEST: Give questions
         displayQuestion();
+        addNextBackBtns();
         addVirtualKeyboardToRoot();
-        //set scene
-        scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        //set scene, if scene not initialized yet.
+        if(scene == null){
+            scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        }
     }
     public Scene getScene() {
         return scene;
@@ -233,6 +282,17 @@ public class TouchScreen {
         menuBar.setTranslateX(menuBar.getTranslateX() + 600);
         menuBar.setTranslateY(menuBar.getLayoutY() + 40);
         root.getChildren().add(menuBar);
+    }
+
+    private void addNextBackBtns(){
+        Button nextBtn = new Button("Next");
+        nextBtn.setTranslateX(nextBtn.getTranslateX() + 250);
+        nextBtn.setOnAction(e -> nextPage());
+
+        Button backBtn = new Button("Back");
+        backBtn.setOnAction(e -> previousPage());
+
+        root.getChildren().addAll(nextBtn, backBtn);
     }
 
     private Button createButtonWithImage(String pathToImage) {
