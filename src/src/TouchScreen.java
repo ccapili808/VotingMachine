@@ -115,19 +115,11 @@ public class TouchScreen {
         // TODO: Right here would be a perfect location to translate
         //  everything before putting them into their HBoxes :)
 
-        ToggleGroup toggleGroup = new ToggleGroup();
-        toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-
-            }
-        });
-
         int numOpts = 3;  // Creates n-many option choices, not including write-in
         int xPos = 300;  // Aligning
         int yPos = 200;  // Aligning
 
-        // TODO: Add ID's to each thingy...how should ID's be formatted?
+
         // 1. Prompt
         HBox promptBox = new HBox();
         Text prompt = new Text("This is a prompt...");
@@ -144,7 +136,6 @@ public class TouchScreen {
             choices[i] = new HBox();
 
             RadioButton rb = new RadioButton();
-            rb.setToggleGroup(toggleGroup);
             choices[i].getChildren().add(rb);
             choices[i].setOnMousePressed(this::select);
 
@@ -157,7 +148,6 @@ public class TouchScreen {
         // 3. Write-in
         HBox writeIn = new HBox();
         RadioButton rb = new RadioButton();
-        rb.setToggleGroup(toggleGroup);
         writeIn.getChildren().add(rb);
         writeIn.setOnMousePressed(this::select);
         Text writeInText = new Text("\t" + "Write-in Field...");  // Create Text Obj
@@ -313,10 +303,15 @@ public class TouchScreen {
         //turn the selected choice's background to green and the rest to white
         for (HBox choice : choices) {
             choice.setOnMouseClicked(e -> {
+                RadioButton rb;
                 for (HBox c : choices) {
                     c.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+                    rb = (RadioButton) c.getChildren().get(0);
+                    rb.setSelected(false);
                 }
                 choice.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+                rb = (RadioButton) choice.getChildren().get(0);
+                rb.setSelected(true);
             });
         }
     }
