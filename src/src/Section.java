@@ -6,12 +6,23 @@ public class Section {
     private ArrayList<Approval> sectionApprovals;
     private ArrayList<RankChoice> sectionRankChoices;
     private ArrayList<Proposition> sectionProposition;
+
+    public ArrayList<Item> getSectionItems() {
+        return sectionItems;
+    }
+
+    private ArrayList<Item> sectionItems;
     public Section(String sectionName, ArrayList<Contest> sectionContests, ArrayList<Approval> sectionApprovals, ArrayList<RankChoice> sectionRankChoices, ArrayList<Proposition> sectionProposition) {
         this.sectionName = sectionName;
         this.sectionContests = sectionContests;
         this.sectionApprovals = sectionApprovals;
         this.sectionRankChoices = sectionRankChoices;
         this.sectionProposition = sectionProposition;
+    }
+
+    public Section(String sectionName, ArrayList<Item> items) {
+        this.sectionName = sectionName;
+        this.sectionItems = items;
     }
 
     public String getSectionName() {

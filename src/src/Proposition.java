@@ -1,39 +1,29 @@
+import java.util.HashMap;
 import java.util.List;
 
-public class Proposition {
+public class Proposition extends Item{
     /**
      * For the proposition type of votes
      */
     private String propDescription;
-    private String propName;
     private List<String> option;
-    public Proposition (String propDescription, String propName, List<String> option) {
+    private HashMap<String, Boolean> selections = new HashMap<>();
+    public Proposition (String propDescription, String propName, List<String> option, int itemID, String sectionName, String itemType) {
+        super(itemType,propName,sectionName,itemID);
         this.propDescription = propDescription;
-        this.propName = propName;
         this.option = option;
+        for (String itemOption:option
+             ) {
+            selections.put(itemOption,false);
+        }
     }
 
     public String getPropDescription() {
         return propDescription;
     }
 
-    public void setPropDescription(String propDescription) {
-        this.propDescription = propDescription;
-    }
-
-    public String getPropName() {
-        return propName;
-    }
-
-    public void setPropName(String propName) {
-        this.propName = propName;
-    }
-
     public List<String> getOption() {
         return option;
     }
 
-    public void setOption(List<String> option) {
-        this.option = option;
-    }
 }

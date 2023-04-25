@@ -1,25 +1,20 @@
-public class Approval {
-    private String approvalName;
+import java.util.HashMap;
+
+public class Approval extends Item{
     private Candidates approvalCandidates;
-    public Approval (String approvalName, Candidates candidatesList) {
-        this.approvalName = approvalName;
+    private HashMap<String, Boolean> selections = new HashMap<>();
+
+    public Approval (String approvalName, Candidates candidatesList, int itemID, String sectionName, String itemType) {
+        super(itemType, approvalName,sectionName,itemID);
         this.approvalCandidates = candidatesList;
+        for (String itemCandidate: candidatesList.getCandidatesList().keySet()
+        ) {
+            selections.put(itemCandidate,false);
+        }
     }
-
-    public String getApprovalName() {
-        return approvalName;
-    }
-
-    public void setApprovalName(String approvalName) {
-        this.approvalName = approvalName;
-    }
-
 
     public Candidates getApprovalCandidates() {
         return approvalCandidates;
     }
 
-    public void setApprovalCandidates(Candidates approvalCandidates) {
-        this.approvalCandidates = approvalCandidates;
-    }
 }

@@ -26,7 +26,7 @@ public class Storage {
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(new File("ballot.json"));
-
+        int i = 1;
         //header object
         JsonNode headerNode = rootNode.get("header");
         String date = headerNode.get("date").asText();
@@ -39,10 +39,7 @@ public class Storage {
         for (JsonNode sectionNode : sectionsNode) {
             String sectionName = sectionNode.get("sectionName").asText();
             JsonNode itemsNode = sectionNode.get("items");
-            ArrayList<Contest> sectionContests = new ArrayList<>();
-            ArrayList<Proposition> sectionPropositions = new ArrayList<>();
-            ArrayList<RankChoice> sectionRankChoices = new ArrayList<>();
-            ArrayList<Approval> sectionApprovals = new ArrayList<>();
+            ArrayList<Item> items = new ArrayList<>();
             //item objects
             for (JsonNode itemNode : itemsNode) {
                 String tag = itemNode.get("tag").asText();
@@ -63,9 +60,10 @@ public class Storage {
 
                         }
                         Candidates candidatesC = new Candidates(contestCandidates);
-                        Contest contest = new Contest(contestName, candidatesC, writeIn);
+                        Contest contest = new Contest(contestName, candidatesC, writeIn, i, sectionName, tag);
+                        i++;
                         // Add contest to section list
-                        sectionContests.add(contest);
+                        items.add(contest);
                         break;
 
                     case "Proposition":
@@ -80,9 +78,10 @@ public class Storage {
                             // Add option to list
                             optionsList.add(option);
                         }
-                        Proposition proposition = new Proposition(propDescription, propName, optionsList);
+                        Proposition proposition = new Proposition(propDescription, propName, optionsList, i, sectionName,tag);
+                        i++;
                         // Add proposition to section list
-                        sectionPropositions.add(proposition);
+                        items.add(proposition);
                         break;
 
                     case "RankedChoice":
@@ -99,10 +98,11 @@ public class Storage {
                             rankedCandidates.put(rcCandidateName,rcCandidateParty);
                         }
                         Candidates candidatesR = new Candidates(rankedCandidates);
-                        RankChoice rankChoice = new RankChoice(rcName, candidatesR);
+                        RankChoice rankChoice = new RankChoice(rcName, candidatesR,i, sectionName, tag);
+                        i++;
 
                         // Add ranked choice to section list
-                        sectionRankChoices.add(rankChoice);
+                        items.add(rankChoice);
                         break;
 
                     case "Approval":
@@ -119,10 +119,11 @@ public class Storage {
                             approvalCandidates.put(approvalCandidateName,approvalCandidateParty);
                         }
                         Candidates candidatesA = new Candidates(approvalCandidates);
-                        Approval approval = new Approval(appName, candidatesA);
+                        Approval approval = new Approval(appName, candidatesA,i,sectionName,tag);
+                        i++;
 
                         // Add approval to section list
-                        sectionApprovals.add(approval);
+                        items.add(approval);
                         break;
 
                     default:
@@ -133,7 +134,7 @@ public class Storage {
             }
 
             // Create Section
-            Section section = new Section(sectionName, sectionContests, sectionApprovals, sectionRankChoices, sectionPropositions);
+            Section section = new Section(sectionName, items);
             electionSections.add(section);
         }
     }

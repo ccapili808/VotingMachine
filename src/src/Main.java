@@ -3,7 +3,15 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Main extends Application {
+
+    private List<Section> ballot;
+    private Storage storage;
+    private int currentPrompt = 1;
     @Override
     public void start(Stage primaryStage) throws Exception {
         TouchScreen touchScreen = new TouchScreen();
@@ -12,6 +20,7 @@ public class Main extends Application {
         VoteAuthorizationCardScanner voteAuthorizationCardScanner = new VoteAuthorizationCardScanner(scene, root);
         primaryStage.setScene(scene);
         primaryStage.show();
+        parseSetUpInfo();
     }
 
     public static void main(String[] args) {
@@ -26,7 +35,8 @@ public class Main extends Application {
      * The array of choices, will store all the prompt choices. The array of selections will store all the user selections.
      */
     public void parseSetUpInfo() {
-
+        storage = new Storage();
+        ballot = storage.getElectionSections();
     }
 
     /**
@@ -34,29 +44,39 @@ public class Main extends Application {
      * Useful for skipping around when a user wants to change their vote during the vote verification phase.
      * @param promptNumber - the integer value of the prompt to be retrieved.
      */
-    public void getPrompt(int promptNumber) {
-
+    public Item getPrompt(int promptNumber) {
+        for (Section section: ballot) {
+            if (section.getSectionItems() != null) {
+                for (Item item: section.getSectionItems()) {
+                    if (promptNumber == item.getItemID()) {
+                        currentPrompt = promptNumber;
+                        return item;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
      * Gets next prompt from prompts array. When the user finishes select the answer in the current prompt.
      */
     public void getNextPrompt() {
-
+        getPrompt(currentPrompt+1);
     }
 
     /**
      * Gets previous prompt from prompt array. When the user wants to go to the previous prompt to change the selection.
      */
     public void getPrevPrompt() {
-
+        getPrompt(currentPrompt-1);
     }
 
     /**
      * This function will clear the array that was created in parseSetUpInfo()
      */
     public void clearSetUpInfo() {
-
+        ballot = new ArrayList<>();
     }
 
     /**
@@ -74,8 +94,7 @@ public class Main extends Application {
      * If any of these functions return false, then the setup failed, and this function should return false.
      */
     public boolean validSetup() {
-        return true;
-        //return (storage.validPriStorage && storage.validBackStorage && storage.validSetupStorage);
+        return (storage.validPriStorage() && storage.validBackStorage() && storage.validSetupStorage());
     }
 
     /**

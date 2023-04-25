@@ -1,25 +1,11 @@
-public class RankChoice {
-    private String rankedChoiceName;
+public class RankChoice extends Item{
     private Candidates rackChoiceCandidates;
-    public RankChoice(String rankedChoiceName, Candidates candidatesList) {
-        this.rankedChoiceName = rankedChoiceName;
+    public RankChoice(String rankedChoiceName, Candidates candidatesList, int itemID, String sectionName, String itemType) {
+        super(itemType, rankedChoiceName, sectionName, itemID);
         this.rackChoiceCandidates = candidatesList;
     }
 
-    public String getRankedChoiceName() {
-        return rankedChoiceName;
-    }
-
-    public void setRankedChoiceName(String rankedChoiceName) {
-        this.rankedChoiceName = rankedChoiceName;
-    }
-
-
     public Candidates getRackChoiceCandidates() {
         return rackChoiceCandidates;
-    }
-
-    public void setRackChoiceCandidates(Candidates rackChoiceCandidates) {
-        this.rackChoiceCandidates = rackChoiceCandidates;
     }
 }
