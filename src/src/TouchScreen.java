@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TouchScreen {
+    private final double SCENE_WIDTH = 1200;
+    private final double SCENE_HEIGHT = 600;
     private final double WINDOW_WIDTH = 800;
     private final double WINDOW_HEIGHT = 600;
     private static int brightnessLevel;
@@ -37,6 +39,7 @@ public class TouchScreen {
         masterLanguage = "English";
         textSizeLevel = 12;
         Rectangle background = new Rectangle(WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
+        background.setStroke(Color.BLACK);
         this.root = new Group();
         this.root.getChildren().add(background);
         setScene();
@@ -181,10 +184,14 @@ public class TouchScreen {
         displayQuestion();
         addVirtualKeyboardToRoot();
         //set scene
-        scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
     }
     public Scene getScene() {
         return scene;
+    }
+
+    public Group getRoot(){
+        return root;
     }
 
     private void setAccessibilityLayout() {

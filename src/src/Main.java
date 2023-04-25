@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -7,6 +8,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         TouchScreen touchScreen = new TouchScreen();
         Scene scene = touchScreen.getScene();
+        Group root = touchScreen.getRoot();
+        VoteAuthorizationCardScanner voteAuthorizationCardScanner = new VoteAuthorizationCardScanner(scene, root);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
