@@ -32,6 +32,10 @@ public class TouchScreen {
     Rectangle background = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     private List<Text> textList = new ArrayList<>();
 
+    //TODO: CHANGE NAME
+    //This group is so that gui objects outside of touch screen can be added to the scene
+    //without being affected by the functionality of touchscreen.
+    private Group mainRoot;
 
     private Group root;
     private Scene scene;
@@ -42,7 +46,9 @@ public class TouchScreen {
         masterLanguage = "English";
         textSizeLevel = 12;
         Rectangle background = new Rectangle(WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
+        background.setStroke(Color.BLACK);
         this.root = new Group();
+        this.mainRoot = new Group();
         this.root.getChildren().add(background);
         setScene();
     }
@@ -219,9 +225,12 @@ public class TouchScreen {
         displayQuestion();
         addNextBackBtns();
         addVirtualKeyboardToRoot();
+        if(!mainRoot.getChildren().contains(root)){
+            mainRoot.getChildren().add(root);
+        }
         //set scene, if scene not initialized yet.
         if(scene == null){
-            scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
+            scene = new Scene(mainRoot, SCENE_WIDTH, SCENE_HEIGHT);
         }
     }
     public Scene getScene() {
@@ -229,7 +238,7 @@ public class TouchScreen {
     }
 
     public Group getRoot(){
-        return root;
+        return mainRoot;
     }
 
     private void setAccessibilityLayout() {

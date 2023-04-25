@@ -45,10 +45,17 @@ public class VoteAuthorizationCardScanner {
         root.getChildren().add(vBox);
 
         //TODO: ADD ON CLICK EVENT
-        Rectangle scanner = new Rectangle(SCANNER_WIDTH, SCANNER_HEIGHT, Color.BLACK);
+        Rectangle scanner = new Rectangle(SCANNER_WIDTH, SCANNER_HEIGHT, Color.WHITE);
+        scanner.setStroke(Color.BLACK);
         scanner.setX(925);
         scanner.setY(PANEL_HEIGHT-70);
+
+        //ScannerText won't be visible in final design
+        Text scannerText = new Text("Click here to insert card");
+        scannerText.setX(950);
+        scannerText.setY(PANEL_HEIGHT-40);
         root.getChildren().add(scanner);
+        root.getChildren().add(scannerText);
     }
 
     /**
