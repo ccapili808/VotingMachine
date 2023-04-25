@@ -15,17 +15,13 @@ public class Translator {
      */
     public static void main(String[] args) throws Exception {
         // TODO: Specify your translation requirements here:
-        String fromLang = "en";
-        String toLang = "es";
-        String text = "The next president is great.";
-
-        Translator.translate(fromLang, toLang, text);
+        translateEnglishToSpanish("Hello");
     }
 
     /**
      * Sends out a WhatsApp message via WhatsMate WA Gateway.
      */
-    public static void translate(String fromLang, String toLang, String text) throws Exception {
+    public static String translate(String fromLang, String toLang, String text) throws Exception {
         // TODO: Should have used a 3rd party library to make a JSON string from an object
         String jsonPayload = new StringBuilder()
                 .append("{")
@@ -62,8 +58,22 @@ public class Translator {
         String output;
         while ((output = br.readLine()) != null) {
             System.out.println(output);
+            return output;
         }
         conn.disconnect();
+        return output;
+    }
+
+    public static String translateEnglishToSpanish(String text) throws Exception {
+        String fromLang = "en";
+        String toLang = "es";
+        return translate(fromLang, toLang, text);
+    }
+
+    public static String translateEnglishToMandarin(String text) throws Exception {
+        String fromLang = "en";
+        String toLang = "zh";
+        return translate(fromLang, toLang, text);
     }
 
 }
