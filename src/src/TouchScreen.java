@@ -17,7 +17,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TouchScreen {
     private final double SCENE_WIDTH = 1200;
@@ -25,12 +27,20 @@ public class TouchScreen {
     private final double WINDOW_WIDTH = 800;
     private final double WINDOW_HEIGHT = 600;
     private static int brightnessLevel;
-    private static String masterLanguage = "Spanish";
+    private static String masterLanguage = "English";
     private double textSizeLevel = 12;
     private VirtualKeypad keyboard = new VirtualKeypad();
     ColorAdjust colorAdjust;
     Rectangle background = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     private List<Text> textList = new ArrayList<>();
+
+    //This is where we will temporarily store prompts and options passed in
+    List<String> prompts;
+    Map<String, List<String>> options; //Key is prompt, value is list of options
+    //This is where we will temporarily store the selected options
+    Map<String, String> selectedOptions; //Key is prompt, value is list of selected options
+    VBox[] pages;
+    int currentPage = 0;
 
     //TODO: CHANGE NAME
     //This group is so that gui objects outside of touch screen can be added to the scene
@@ -51,6 +61,7 @@ public class TouchScreen {
         this.mainRoot = new Group();
         this.root.getChildren().add(background);
         setScene();
+
     }
 
     private void select(MouseEvent e) {
@@ -119,27 +130,25 @@ public class TouchScreen {
      *   some type of "Items obj". Then just insert each arg in it's respective
      *   HBox below.
      */
-    private void displayQuestion(){
+    private VBox displayQuestion(String promptString, String[] choiceList) {
         // TODO: Right here would be a perfect location to translate
         //  everything before putting them into their HBoxes :)
 
         int numOpts = 3;  // Creates n-many option choices, not including write-in
-        int xPos = 300;  // Aligning
-        int yPos = 200;  // Aligning
+        VBox page = new VBox();
+        page.setSpacing(10);
 
 
         // 1. Prompt
         HBox promptBox = new HBox();
         //Add prompts here:
-        String promptString = Translator.translateLanguage("This is a prompt...", masterLanguage);
+        promptString = Translator.translateLanguage(promptString, masterLanguage);
         Text prompt = new Text(promptString);
         promptBox.getChildren().add(prompt);  // Fluff
-        promptBox.setTranslateX(promptBox.getTranslateX() + xPos);
-        promptBox.setTranslateY(promptBox.getTranslateY() + yPos);
         promptBox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
         promptBox.setPadding(new Insets(10));
         textList.add(prompt);
-        yPos += 50;
+
         // 2. Choices
         HBox[] choices = new HBox[numOpts+1];
         String answerString = Translator.translateLanguage("Answer Choice ", masterLanguage);
@@ -149,8 +158,8 @@ public class TouchScreen {
             choices[i].getChildren().add(rb);
             choices[i].setOnMousePressed(this::select);
             Text text = new Text("\t" + answerString + i);  // Create Text Obj
-            choices[i] = setGUIFormat(choices[i], text, xPos, yPos);
-            yPos += 50;  // Slides box down +50 pixels
+            choices[i].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
+            choices[i].getChildren().add(text);
         }
 
         // 3. Write-in
@@ -160,7 +169,7 @@ public class TouchScreen {
         writeIn.setOnMousePressed(this::select);
         String writeInString = Translator.translateLanguage("Write-in Field...", masterLanguage);
         Text writeInText = new Text("\t" + writeInString);  // Create Text Obj
-        writeIn = setGUIFormat(writeIn, writeInText, xPos, yPos);
+        writeIn.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
 
 
         // 4. Set Actions on each radio button
@@ -168,10 +177,13 @@ public class TouchScreen {
         choiceOnClick(choices);
 
         // 4. Add questionnaire to GUI display.
-        root.getChildren().addAll(promptBox);
+        page.getChildren().add(promptBox);
         for(Node c : choices){
-            root.getChildren().add(c);
+            page.getChildren().add(c);
         }
+        page.setTranslateX(WINDOW_WIDTH / 2 - 100);
+        page.setTranslateY(WINDOW_HEIGHT - 400);
+        return page;
     }
 
     private HBox setGUIFormat(HBox hbox, Text textField, int xPos, int yPos) {
@@ -186,11 +198,38 @@ public class TouchScreen {
     }
 
     private void nextPage() {
-        resetRoot();
+        //go to next page and set all other pages in JavaFX to invisible
+        //if last page go to the first page
+        //you can use the VBox[] pages where each Vbox has an id of "page" + i
+        //where i is the page number
+        //you can use the method setVisible(boolean) to set the page to visible or invisible
+        if(currentPage < pages.length - 1){
+            pages[currentPage].setVisible(false);
+            currentPage++;
+            pages[currentPage].setVisible(true);
+        }else{
+            pages[currentPage].setVisible(false);
+            currentPage = 0;
+            pages[currentPage].setVisible(true);
+        }
+
     }
 
     private void previousPage() {
-        resetRoot();
+        //go to previous page and set all other pages in JavaFX to invisible
+        //if first page go to the last page
+        //you can use the VBox[] pages where each Vbox has an id of "page" + i
+        //where i is the page number
+        //you can use the method setVisible(boolean) to set the page to visible or invisible
+        if(currentPage > 0){
+            pages[currentPage].setVisible(false);
+            currentPage--;
+            pages[currentPage].setVisible(true);
+        }else{
+            pages[currentPage].setVisible(false);
+            currentPage = pages.length - 1;
+            pages[currentPage].setVisible(true);
+        }
     }
 
     private void resetRoot() {
@@ -222,7 +261,7 @@ public class TouchScreen {
         //fill root with layout
         setAccessibilityLayout();
         // TEST: Give questions
-        displayQuestion();
+        setPages(3);
         addNextBackBtns();
         addVirtualKeyboardToRoot();
         Button hideOrShowKeyboard = hideOrShowKeyboard(keyboard);
@@ -351,5 +390,35 @@ public class TouchScreen {
         });
         return hideOrShowKeyboard;
     }
+
+    //USED FOR STORING VOTES AND PAGES
+    public void setPages(int numPages) {
+        this.pages = new VBox[numPages];
+        pages[0] = displayQuestion("What is your favorite color?", new String[]{"Red", "Blue", "Green"});
+        pages[1] = displayQuestion("What is your favorite animal?", new String[]{"Dog", "Cat", "Bird"});
+        pages[2] = displayQuestion("What is your favorite food?", new String[]{"Pizza", "Burger", "Salad"});
+        //iterate through each page and give them an id
+        for (int i = 0; i < pages.length; i++) {
+            if(i == 0) {
+                pages[i].setVisible(true);
+            } else {
+                pages[i].setVisible(false);
+            }
+            pages[i].setId("page" + i);
+        }
+        root.getChildren().addAll(pages[0], pages[1], pages[2]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
