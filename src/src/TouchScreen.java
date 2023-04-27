@@ -25,7 +25,7 @@ public class TouchScreen {
     private final double WINDOW_WIDTH = 800;
     private final double WINDOW_HEIGHT = 600;
     private static int brightnessLevel;
-    private static String masterLanguage;
+    private static String masterLanguage = "Spanish";
     private double textSizeLevel = 12;
     private VirtualKeypad keyboard = new VirtualKeypad();
     ColorAdjust colorAdjust;
@@ -43,7 +43,7 @@ public class TouchScreen {
         // Default levels
         this.colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(0.0);
-        masterLanguage = "English";
+        //masterLanguage = "English";
         textSizeLevel = 12;
         Rectangle background = new Rectangle(WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
         background.setStroke(Color.BLACK);
@@ -130,7 +130,9 @@ public class TouchScreen {
 
         // 1. Prompt
         HBox promptBox = new HBox();
-        Text prompt = new Text("This is a prompt...");
+        //Add prompts here:
+        String promptString = Translator.translateLanguage("This is a prompt...", masterLanguage);
+        Text prompt = new Text(promptString);
         promptBox.getChildren().add(prompt);  // Fluff
         promptBox.setTranslateX(promptBox.getTranslateX() + xPos);
         promptBox.setTranslateY(promptBox.getTranslateY() + yPos);
@@ -140,16 +142,14 @@ public class TouchScreen {
         yPos += 50;
         // 2. Choices
         HBox[] choices = new HBox[numOpts+1];
+        String answerString = Translator.translateLanguage("Answer Choice ", masterLanguage);
         for(int i = 0; i < numOpts; i++){
             choices[i] = new HBox();
-
             RadioButton rb = new RadioButton();
             choices[i].getChildren().add(rb);
             choices[i].setOnMousePressed(this::select);
-
-            Text text = new Text("\t" + "Answer Choice " + i);  // Create Text Obj
+            Text text = new Text("\t" + answerString + i);  // Create Text Obj
             choices[i] = setGUIFormat(choices[i], text, xPos, yPos);
-
             yPos += 50;  // Slides box down +50 pixels
         }
 
@@ -158,7 +158,8 @@ public class TouchScreen {
         RadioButton rb = new RadioButton();
         writeIn.getChildren().add(rb);
         writeIn.setOnMousePressed(this::select);
-        Text writeInText = new Text("\t" + "Write-in Field...");  // Create Text Obj
+        String writeInString = Translator.translateLanguage("Write-in Field...", masterLanguage);
+        Text writeInText = new Text("\t" + writeInString);  // Create Text Obj
         writeIn = setGUIFormat(writeIn, writeInText, xPos, yPos);
 
 
@@ -185,17 +186,16 @@ public class TouchScreen {
     }
 
     private void nextPage() {
-        // Clear GUI
-        root.getChildren().clear();
-
-        // Add stuff to GUI
-        setScene();
+        resetRoot();
     }
 
     private void previousPage() {
+        resetRoot();
+    }
+
+    private void resetRoot() {
         // Clear GUI
         root.getChildren().clear();
-
         // Add stuff to GUI
         setScene();
     }
@@ -225,6 +225,10 @@ public class TouchScreen {
         displayQuestion();
         addNextBackBtns();
         addVirtualKeyboardToRoot();
+        Button hideOrShowKeyboard = hideOrShowKeyboard(keyboard);
+        hideOrShowKeyboard.setTranslateX(WINDOW_WIDTH - 100);
+        hideOrShowKeyboard.setTranslateY(WINDOW_HEIGHT - 100);
+        root.getChildren().add(hideOrShowKeyboard);
         if(!mainRoot.getChildren().contains(root)){
             mainRoot.getChildren().add(root);
         }
@@ -242,33 +246,36 @@ public class TouchScreen {
     }
 
     private void setAccessibilityLayout() {
-        Menu menu = new Menu("Accessibility");
-
-        Menu audioMenu = new Menu("Audio Level");
-        MenuItem volumeInc = new MenuItem("Volume +1");
-        MenuItem volumeDec = new MenuItem("Volume -1");
+        Menu menu = new Menu(Translator.translateLanguage("Accessibility", masterLanguage));
+        Menu audioMenu = new Menu(Translator.translateLanguage("Audio", masterLanguage));
+        String volume = Translator.translateLanguage("Volume", masterLanguage);
+        MenuItem volumeInc = new MenuItem(volume + " +1");
+        MenuItem volumeDec = new MenuItem(volume + " -1");
         volumeInc.setOnAction(e -> Audio.increaseVolume());
         volumeDec.setOnAction(e -> Audio.decreaseVolume());
         audioMenu.getItems().add(volumeInc);
         audioMenu.getItems().add(volumeDec);
 
-        Menu textSizeMenu = new Menu("Text Size");
-        MenuItem textSizeInc = new MenuItem("Text Size +1");
-        MenuItem textSizeDec = new MenuItem("Text Size -1");
+        String textSize = Translator.translateLanguage("Text Size", masterLanguage);
+        Menu textSizeMenu = new Menu(textSize);
+        MenuItem textSizeInc = new MenuItem(textSize + " +1");
+        MenuItem textSizeDec = new MenuItem(textSize + " -1");
         textSizeInc.setOnAction(e -> increaseTextSize());
         textSizeDec.setOnAction(e -> decreaseTextSize());
         textSizeMenu.getItems().add(textSizeInc);
         textSizeMenu.getItems().add(textSizeDec);
 
-        Menu brightnessMenu = new Menu("Brightness");
-        MenuItem brightnessInc = new MenuItem("Brightness +1");
-        MenuItem brightnessDec = new MenuItem("Brightness -1");
+        String brightness = Translator.translateLanguage("Brightness", masterLanguage);
+        Menu brightnessMenu = new Menu(brightness);
+        MenuItem brightnessInc = new MenuItem(brightness + " +1");
+        MenuItem brightnessDec = new MenuItem(brightness + " -1");
         brightnessInc.setOnAction(e -> increaseBrightness());
         brightnessDec.setOnAction(e -> decreaseBrightness());
         brightnessMenu.getItems().add(brightnessInc);
         brightnessMenu.getItems().add(brightnessDec);
 
-        Menu languageMenu = new Menu("Language");
+
+        Menu languageMenu = new Menu(Translator.translateLanguage("Language", masterLanguage));
         MenuItem english = new MenuItem("English");
         MenuItem spanish = new MenuItem("Spanish");
         MenuItem mandarin = new MenuItem("Mandarin");
@@ -282,6 +289,7 @@ public class TouchScreen {
         menu.getItems().add(textSizeMenu);
         menu.getItems().add(brightnessMenu);
         menu.getItems().add(languageMenu);
+        menu.getItems().add(audioMenu);
 
         MenuBar menuBar = new MenuBar(menu);
         menuBar.setTranslateX(menuBar.getTranslateX() + 600);
@@ -290,11 +298,10 @@ public class TouchScreen {
     }
 
     private void addNextBackBtns(){
-        Button nextBtn = new Button("Next");
+        Button nextBtn = new Button(Translator.translateLanguage("Next", masterLanguage));
         nextBtn.setTranslateX(nextBtn.getTranslateX() + 250);
         nextBtn.setOnAction(e -> nextPage());
-
-        Button backBtn = new Button("Back");
+        Button backBtn = new Button(Translator.translateLanguage("Back", masterLanguage));
         backBtn.setOnAction(e -> previousPage());
 
         root.getChildren().addAll(nextBtn, backBtn);
@@ -329,6 +336,20 @@ public class TouchScreen {
                 rb.setSelected(true);
             });
         }
+    }
+
+    private Button hideOrShowKeyboard(VirtualKeypad keyboard) {
+        Button hideOrShowKeyboard = new Button("Hide Keyboard");
+        hideOrShowKeyboard.setOnAction(e -> {
+            if (keyboard.isVisible()) {
+                keyboard.setVisible(false);
+                hideOrShowKeyboard.setText("Show Keyboard");
+            } else {
+                keyboard.setVisible(true);
+                hideOrShowKeyboard.setText("Hide Keyboard");
+            }
+        });
+        return hideOrShowKeyboard;
     }
 
 }

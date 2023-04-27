@@ -76,4 +76,23 @@ public class Translator {
         return translate(fromLang, toLang, text);
     }
 
+    public static String translateLanguage(String text, String language) {
+        switch (language) {
+            case "Spanish":
+                try {
+                    return translateEnglishToSpanish(text);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            case "Mandarin":
+                try {
+                    return translateEnglishToMandarin(text);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            default:
+                return text;
+        }
+    }
+
 }
