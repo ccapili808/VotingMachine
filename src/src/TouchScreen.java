@@ -225,6 +225,10 @@ public class TouchScreen {
         displayQuestion();
         addNextBackBtns();
         addVirtualKeyboardToRoot();
+        Button hideOrShowKeyboard = hideOrShowKeyboard(keyboard);
+        hideOrShowKeyboard.setTranslateX(WINDOW_WIDTH - 100);
+        hideOrShowKeyboard.setTranslateY(WINDOW_HEIGHT - 100);
+        root.getChildren().add(hideOrShowKeyboard);
         if(!mainRoot.getChildren().contains(root)){
             mainRoot.getChildren().add(root);
         }
@@ -332,6 +336,20 @@ public class TouchScreen {
                 rb.setSelected(true);
             });
         }
+    }
+
+    private Button hideOrShowKeyboard(VirtualKeypad keyboard) {
+        Button hideOrShowKeyboard = new Button("Hide Keyboard");
+        hideOrShowKeyboard.setOnAction(e -> {
+            if (keyboard.isVisible()) {
+                keyboard.setVisible(false);
+                hideOrShowKeyboard.setText("Show Keyboard");
+            } else {
+                keyboard.setVisible(true);
+                hideOrShowKeyboard.setText("Hide Keyboard");
+            }
+        });
+        return hideOrShowKeyboard;
     }
 
 }
