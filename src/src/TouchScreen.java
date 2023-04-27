@@ -186,17 +186,16 @@ public class TouchScreen {
     }
 
     private void nextPage() {
-        // Clear GUI
-        root.getChildren().clear();
-
-        // Add stuff to GUI
-        setScene();
+        resetRoot();
     }
 
     private void previousPage() {
+        resetRoot();
+    }
+
+    private void resetRoot() {
         // Clear GUI
         root.getChildren().clear();
-
         // Add stuff to GUI
         setScene();
     }
@@ -243,8 +242,7 @@ public class TouchScreen {
     }
 
     private void setAccessibilityLayout() {
-        Menu menu = new Menu("Accessibility");
-
+        Menu menu = new Menu(Translator.translateLanguage("Accessibility", masterLanguage));
         Menu audioMenu = new Menu(Translator.translateLanguage("Audio", masterLanguage));
         String volume = Translator.translateLanguage("Volume", masterLanguage);
         MenuItem volumeInc = new MenuItem(volume + " +1");
