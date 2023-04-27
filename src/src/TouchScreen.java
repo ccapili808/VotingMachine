@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TouchScreen {
-    private final double SCENE_WIDTH = 1200;
+    private final double SCENE_WIDTH = 1300;
     private final double SCENE_HEIGHT = 600;
     private final double WINDOW_WIDTH = 800;
     private final double WINDOW_HEIGHT = 600;

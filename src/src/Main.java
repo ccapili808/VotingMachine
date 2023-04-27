@@ -17,7 +17,8 @@ public class Main extends Application {
         TouchScreen touchScreen = new TouchScreen();
         Scene scene = touchScreen.getScene();
         Group root = touchScreen.getRoot();
-        VoteAuthorizationCardScanner voteAuthorizationCardScanner = new VoteAuthorizationCardScanner(scene, root);
+        VoteAuthorizationCardScanner voteAuthorizationCardScanner = new VoteAuthorizationCardScanner(root);
+        Battery battery = new Battery(root);
         primaryStage.setScene(scene);
         primaryStage.show();
         parseSetUpInfo();

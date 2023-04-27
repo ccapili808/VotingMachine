@@ -11,8 +11,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class VoteAuthorizationCardScanner {
-    private Scene scene;
-    private final Group mainRoot;
     private Group root;
     private final int OFFSET = 825;
     private final double PANEL_WIDTH = 300;
@@ -25,15 +23,15 @@ public class VoteAuthorizationCardScanner {
     private final long LIMIT = 10000000000L;
     private long id = 0;
 
+    Text idText;
+
     private final double SCANNER_WIDTH = 250;
     private final double SCANNER_HEIGHT = 50;
-    public VoteAuthorizationCardScanner(Scene scene, Group root) {
-        this.scene = scene;
-        mainRoot = root;
+    public VoteAuthorizationCardScanner(Group root) {
         this.root = new Group();
         createCardScannerGUI();
         cardInserted = false;
-        mainRoot.getChildren().add(this.root);
+        root.getChildren().add(this.root);
     }
 
     private void createCardScannerGUI(){
@@ -42,7 +40,7 @@ public class VoteAuthorizationCardScanner {
         panel.setX(OFFSET);
         root.getChildren().add(panel);
 
-        voteAuthorizationCard = new Rectangle(PANEL_WIDTH -10, PANEL_HEIGHT -80, Color.BLACK);
+        voteAuthorizationCard = new Rectangle(PANEL_WIDTH -10, PANEL_HEIGHT -80, Color.GREY);
         if(cardInserted){
             voteAuthorizationCard.setFill(Color.WHITE);
         }
@@ -66,6 +64,11 @@ public class VoteAuthorizationCardScanner {
             }
         });
         root.getChildren().add(scanner);
+
+        idText = new Text();
+        root.getChildren().add(idText);
+        idText.setX(OFFSET + 10);
+        idText.setY(PANEL_HEIGHT - SCANNER_HEIGHT - 30);
 /*
         //TODO: This should all be moved to printer functionality
         VBox vBox = new VBox();
@@ -99,10 +102,8 @@ public class VoteAuthorizationCardScanner {
         cardInserted = true;
         voteAuthorizationCard.setFill(Color.WHITE);
         id = generateID();
-        Text idText = new Text(Long.toString(id));
-        idText.setX(OFFSET + 10);
-        idText.setY(PANEL_HEIGHT - SCANNER_HEIGHT - 30);
-        root.getChildren().add(idText);
+        idText.setVisible(true);
+        idText.setText(Long.toString(id));
     }
 
     /**
@@ -110,8 +111,8 @@ public class VoteAuthorizationCardScanner {
      */
     private void removeCard() {
         cardInserted = false;
-        root.getChildren().clear();
-        createCardScannerGUI();
+        voteAuthorizationCard.setFill(Color.GREY);
+        idText.setVisible(false);
     }
 
     /**
