@@ -1,36 +1,72 @@
+import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
+
 public class VoteAuthorizationCardScanner {
     private Scene scene;
+    private final Group mainRoot;
     private Group root;
+    private final int OFFSET = 825;
     private final double PANEL_WIDTH = 300;
     private final double PANEL_HEIGHT = 600;
+    private Rectangle voteAuthorizationCard;
+
+    private boolean cardInserted;
+    private boolean staffOverride = true;
+
+    private final long LIMIT = 10000000000L;
+    private long id = 0;
 
     private final double SCANNER_WIDTH = 250;
     private final double SCANNER_HEIGHT = 50;
     public VoteAuthorizationCardScanner(Scene scene, Group root) {
         this.scene = scene;
-        this.root = root;
+        mainRoot = root;
+        this.root = new Group();
         createCardScannerGUI();
+        cardInserted = false;
+        mainRoot.getChildren().add(this.root);
     }
 
     private void createCardScannerGUI(){
         Rectangle panel = new Rectangle(PANEL_WIDTH, PANEL_HEIGHT, Color.WHITE);
         panel.setStroke(Color.BLACK);
-        panel.setX(900);
+        panel.setX(OFFSET);
         root.getChildren().add(panel);
 
-        Rectangle printer = new Rectangle(PANEL_WIDTH-10, PANEL_HEIGHT-80, Color.WHITE);
-        printer.setStroke(Color.BLACK);
-        printer.setX(900+5);
-        printer.setY(5);
-        root.getChildren().add(printer);
+        voteAuthorizationCard = new Rectangle(PANEL_WIDTH -10, PANEL_HEIGHT -80, Color.BLACK);
+        if(cardInserted){
+            voteAuthorizationCard.setFill(Color.WHITE);
+        }
+        voteAuthorizationCard.setStroke(Color.BLACK);
+        voteAuthorizationCard.setX(OFFSET+5);
+        voteAuthorizationCard.setY(5);
+        root.getChildren().add(voteAuthorizationCard);
 
+        Rectangle scanner = new Rectangle(SCANNER_WIDTH, SCANNER_HEIGHT, Color.WHITE);
+        scanner.setStroke(Color.BLACK);
+        scanner.setX(OFFSET + 25);
+        scanner.setY(PANEL_HEIGHT -60);
+        scanner.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(!cardInserted){
+                    insertCard();
+                }else if(cardInserted && staffOverride){
+                    removeCard();
+                }
+            }
+        });
+        root.getChildren().add(scanner);
+/*
         //TODO: This should all be moved to printer functionality
         VBox vBox = new VBox();
         vBox.setTranslateX(910);
@@ -45,17 +81,13 @@ public class VoteAuthorizationCardScanner {
         root.getChildren().add(vBox);
 
         //TODO: ADD ON CLICK EVENT
-        Rectangle scanner = new Rectangle(SCANNER_WIDTH, SCANNER_HEIGHT, Color.WHITE);
-        scanner.setStroke(Color.BLACK);
-        scanner.setX(925);
-        scanner.setY(PANEL_HEIGHT-70);
 
         //ScannerText won't be visible in final design
         Text scannerText = new Text("Click here to insert card");
         scannerText.setX(950);
-        scannerText.setY(PANEL_HEIGHT-40);
-        root.getChildren().add(scanner);
+        scannerText.setY(SCREEN_HEIGHT -40);
         root.getChildren().add(scannerText);
+        */
     }
 
     /**
@@ -64,14 +96,22 @@ public class VoteAuthorizationCardScanner {
      * Once a card is detected, it holds the card in a fixed position in the display.
      */
     private void insertCard(){
-
+        cardInserted = true;
+        voteAuthorizationCard.setFill(Color.WHITE);
+        id = generateID();
+        Text idText = new Text(Long.toString(id));
+        idText.setX(OFFSET + 10);
+        idText.setY(PANEL_HEIGHT - SCANNER_HEIGHT - 30);
+        root.getChildren().add(idText);
     }
 
     /**
      * Activates the vote authorization card slot to return the voter card back to the user.
      */
     private void removeCard() {
-
+        cardInserted = false;
+        root.getChildren().clear();
+        createCardScannerGUI();
     }
 
     /**
@@ -84,7 +124,13 @@ public class VoteAuthorizationCardScanner {
     /**
      * Generates a new unique ID. This function is used for keeping track of digital and physical votes.
      */
-    int generateID(){
-        return -1;
+    long generateID(){
+        // 10 digits.
+        long id = System.currentTimeMillis() % LIMIT;
+        if ( id <= this.id ) {
+            id = (this.id + 1) % LIMIT;
+        }
+
+        return id;
     }
 }
