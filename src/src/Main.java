@@ -77,7 +77,7 @@ public class Main extends Application {
     /**
      * This function will clear the array that was created in parseSetUpInfo()
      */
-    public void clearSetUpInfo() {
+    public static void clearSetUpInfo() {
         ballot = new ArrayList<>();
     }
 

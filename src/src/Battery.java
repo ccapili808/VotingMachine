@@ -4,12 +4,15 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Battery {
     private Group batteryRoot;
+    private Circle externalLED;
     private String powerSource;
     private float voltage;
     private int xOffset = 1150;
@@ -75,6 +78,13 @@ public class Battery {
         batteryImage.setX(xOffset+50);
         batteryImage.setY(yOffset+100);
 
+        externalLED = new Circle(25);
+        externalLED.setStroke(Color.BLACK);
+        externalLED.setFill(Color.BLACK);
+        externalLED.setCenterX(xOffset+ 60);
+        externalLED.setCenterY(yOffset + 300);
+
+        batteryRoot.getChildren().add(externalLED);
         batteryRoot.getChildren().add(batteryImage);
         batteryRoot.getChildren().add(connectButton);
         batteryRoot.getChildren().add(powerButton);
@@ -108,7 +118,7 @@ public class Battery {
             voltage = 120;
             connectButton.setText("Disconnect Outlet");
         }
-        updateBatteryImage();
+        updateBatteryImageAndExternalLED();
     }
 
     /**
@@ -118,7 +128,13 @@ public class Battery {
         return powerSource;
     }
 
-    private void updateBatteryImage(){
+    private void updateBatteryImageAndExternalLED(){
+        if(powerSource.equals("outlet")){
+            externalLED.setFill(Color.BLACK);
+        }else{
+            externalLED.setFill(Color.YELLOW);
+        }
+
         try{
             if(powerSource.equals("outlet")){
                 batteryImage.setImage(new Image(new FileInputStream("./Resources/outlet.png")));
@@ -151,7 +167,7 @@ public class Battery {
                         } else{
                             //TODO: Add functionality when battery is dead
                         }
-                        updateBatteryImage();
+                        updateBatteryImageAndExternalLED();
                     }
                 } catch (InterruptedException e){
                     e.printStackTrace();
@@ -166,6 +182,7 @@ public class Battery {
      */
     private void manualShutDown(){
         //TODO: SHUTDOWN
+        Main.clearSetUpInfo();
         System.out.println("SHUT DOWN");
     }
 
