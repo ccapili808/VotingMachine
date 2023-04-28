@@ -26,7 +26,11 @@ public class Proposition extends Item{
         return options;
     }
 
-    public void setSelection (String selectedOption, boolean writeIn) {
+    /**
+     * Set the user selection
+     * @param selectedOption the selected option string
+     */
+    public void setSelection (String selectedOption) {
         for (String option: selections.keySet()
         ) {
             selections.put(option,false);
@@ -34,6 +38,10 @@ public class Proposition extends Item{
         selections.put(selectedOption,true);
     }
 
+    /**
+     * Get the user's selection
+     * @return the string of the candidate currently selected
+     */
     public String getSelection() {
         for (String option: selections.keySet()) {
             if (selections.get(option)) {

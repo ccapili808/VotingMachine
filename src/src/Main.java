@@ -10,8 +10,9 @@ import java.util.List;
 public class Main extends Application {
 
     private static List<Section> ballot;
-    private Storage storage;
-    private int currentPrompt = 1;
+    private static Storage storage;
+    public int currentPrompt = 1;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         TouchScreen touchScreen = new TouchScreen();
@@ -38,12 +39,13 @@ public class Main extends Application {
      */
     public void parseSetUpInfo() {
         storage = new Storage();
-        ballot = storage.getElectionSections();
+        ballot = new ArrayList<>(storage.getElectionSections());
     }
 
     /**
      * Gets a specific prompt from our prompts array.
      * Useful for skipping around when a user wants to change their vote during the vote verification phase.
+     * Returns null if itemID doesn't exist in ballot
      * @param promptNumber - the integer value of the prompt to be retrieved.
      */
     public Item getPrompt(int promptNumber) {
@@ -62,23 +64,30 @@ public class Main extends Application {
 
     /**
      * Gets next prompt from prompts array. When the user finishes select the answer in the current prompt.
+     * If at last prompt, will return null
      */
-    public void getNextPrompt() {
-        getPrompt(currentPrompt+1);
+    public Item getNextPrompt() {
+        return getPrompt(currentPrompt+1);
     }
 
     /**
      * Gets previous prompt from prompt array. When the user wants to go to the previous prompt to change the selection.
+     * If at first prompt, return the first prompt again
      */
-    public void getPrevPrompt() {
-        getPrompt(currentPrompt-1);
+    public Item getPrevPrompt() {
+        if (currentPrompt == 1) {
+            return getPrompt(1);
+        }
+        else {
+            return getPrompt(currentPrompt-1);
+        }
     }
 
     /**
      * This function will clear the array that was created in parseSetUpInfo()
      */
     public static void clearSetUpInfo() {
-        ballot = new ArrayList<>();
+        ballot = new ArrayList<>(storage.getElectionSections());
     }
 
     /**

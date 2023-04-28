@@ -27,6 +27,11 @@ public class Contest extends Item{
         return writeIn;
     }
 
+    /**
+     * Set the user selection
+     * @param name the selected candidate's name
+     * @param writeIn true if the selection is the write in
+     */
     public void setSelection (String name, boolean writeIn) {
         for (String candidate: selections.keySet()
              ) {
@@ -41,11 +46,15 @@ public class Contest extends Item{
         }
     }
 
+    /**
+     * Get the user's selection
+     * @return the string of the candidate currently selected
+     */
     public String getSelection() {
         for (String candidate: selections.keySet()) {
             if (selections.get(candidate)) {
                 if (candidate.equals("writeIn")) {
-                    return writeInString;
+                    return ("writeIn:" + writeInString);
                 }
                 else return candidate;
             }
