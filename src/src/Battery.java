@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Battery {
-    private Group root;
+    private Group batteryRoot;
     private String powerSource;
     private float voltage;
     private int xOffset = 1150;
@@ -20,15 +20,15 @@ public class Battery {
     ImageView batteryImage;
 
     public Battery(Group root) {
-        this.root = new Group();
+        batteryRoot = new Group();
         powerSource = "outlet";
-        createBatteryGUI();
-        root.getChildren().add(this.root);
+        batteryGUISetup();
+        root.getChildren().add(batteryRoot);
         Thread batteryLevel = powerMachine();
         batteryLevel.start();
     }
 
-    private void createBatteryGUI(){
+    private void batteryGUISetup(){
         connectButton = new Button("Disconnect Outlet");
         if(!powerSource.equals("outlet")){
             connectButton.setText("Connect Outlet");
@@ -75,22 +75,22 @@ public class Battery {
         batteryImage.setX(xOffset+50);
         batteryImage.setY(yOffset+100);
 
-        root.getChildren().add(batteryImage);
-        root.getChildren().add(connectButton);
-        root.getChildren().add(powerButton);
+        batteryRoot.getChildren().add(batteryImage);
+        batteryRoot.getChildren().add(connectButton);
+        batteryRoot.getChildren().add(powerButton);
     }
 
     /**
      * This function will return the amount of voltage being received by the outlet.
      */
-    private float getOutletVoltage() {
+    public float getOutletVoltage() {
         return voltage;
     }
 
     /**
      * This function will return the amount of power left in the batteries as a percentage.
      */
-    private float getBatteryPercentage(){
+    public float getBatteryPercentage(){
         return batteryPercentage;
     }
 
@@ -114,7 +114,7 @@ public class Battery {
     /**
      * This function will return whether the system is running on outlet or battery power.
      */
-    private String getPwrSource(){
+    public String getPwrSource(){
         return powerSource;
     }
 

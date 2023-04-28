@@ -1,21 +1,19 @@
 import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
-
 public class VoteAuthorizationCardScanner {
-    private Group root;
-    private final int OFFSET = 825;
+    private Group voteCardRoot;
+    private int xOffset = 825;
     private final double PANEL_WIDTH = 300;
     private final double PANEL_HEIGHT = 600;
     private Rectangle voteAuthorizationCard;
+    private VBox vBox;
+    private Group printerJointObjects;
 
     private boolean cardInserted;
     private boolean staffOverride = true;
@@ -28,30 +26,31 @@ public class VoteAuthorizationCardScanner {
     private final double SCANNER_WIDTH = 250;
     private final double SCANNER_HEIGHT = 50;
     public VoteAuthorizationCardScanner(Group root) {
-        this.root = new Group();
-        createCardScannerGUI();
+        voteCardRoot = new Group();
+        printerJointObjects = new Group();
+        cardScannerGUISetup();
+        printerJointObjects.getChildren().add(voteAuthorizationCard);
+        printerJointObjects.getChildren().add(vBox);
         cardInserted = false;
-        root.getChildren().add(this.root);
+        root.getChildren().add(voteCardRoot);
     }
 
-    private void createCardScannerGUI(){
+    private void cardScannerGUISetup(){
         Rectangle panel = new Rectangle(PANEL_WIDTH, PANEL_HEIGHT, Color.WHITE);
         panel.setStroke(Color.BLACK);
-        panel.setX(OFFSET);
-        root.getChildren().add(panel);
+        panel.setX(xOffset);
 
         voteAuthorizationCard = new Rectangle(PANEL_WIDTH -10, PANEL_HEIGHT -80, Color.GREY);
         if(cardInserted){
             voteAuthorizationCard.setFill(Color.WHITE);
         }
         voteAuthorizationCard.setStroke(Color.BLACK);
-        voteAuthorizationCard.setX(OFFSET+5);
+        voteAuthorizationCard.setX(xOffset +5);
         voteAuthorizationCard.setY(5);
-        root.getChildren().add(voteAuthorizationCard);
 
         Rectangle scanner = new Rectangle(SCANNER_WIDTH, SCANNER_HEIGHT, Color.WHITE);
         scanner.setStroke(Color.BLACK);
-        scanner.setX(OFFSET + 25);
+        scanner.setX(xOffset + 25);
         scanner.setY(PANEL_HEIGHT -60);
         scanner.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -63,34 +62,28 @@ public class VoteAuthorizationCardScanner {
                 }
             }
         });
-        root.getChildren().add(scanner);
 
         idText = new Text();
-        root.getChildren().add(idText);
-        idText.setX(OFFSET + 10);
+        idText.setX(xOffset + PANEL_WIDTH - 80);
         idText.setY(PANEL_HEIGHT - SCANNER_HEIGHT - 30);
-/*
-        //TODO: This should all be moved to printer functionality
-        VBox vBox = new VBox();
-        vBox.setTranslateX(910);
+
+        vBox = new VBox();
+        vBox.setTranslateX(xOffset+10);
         vBox.setTranslateY(10);
-        Text example = new Text("This is where the votes will be printed\n");
-        example.setWrappingWidth(250);
-        //TODO: Figure out how to tab text even if it overlaps, maybe tabpane
-        Text example2 = new Text("The text will wrap over if the prompt is too large like in this example");
-        example2.setWrappingWidth(250);
-        vBox.getChildren().add(example);
-        vBox.getChildren().add(example2);
-        root.getChildren().add(vBox);
 
-        //TODO: ADD ON CLICK EVENT
 
-        //ScannerText won't be visible in final design
-        Text scannerText = new Text("Click here to insert card");
-        scannerText.setX(950);
-        scannerText.setY(SCREEN_HEIGHT -40);
-        root.getChildren().add(scannerText);
-        */
+        voteCardRoot.getChildren().add(panel);
+        voteCardRoot.getChildren().add(voteAuthorizationCard);
+        voteCardRoot.getChildren().add(scanner);
+        voteCardRoot.getChildren().add(vBox);
+        voteCardRoot.getChildren().add(idText);
+        voteCardRoot.getChildren().add(printerJointObjects);
+
+    }
+
+    public Group getPrinterJointObjects(){
+
+        return printerJointObjects;
     }
 
     /**
@@ -111,6 +104,7 @@ public class VoteAuthorizationCardScanner {
      */
     private void removeCard() {
         cardInserted = false;
+        vBox.getChildren().clear();
         voteAuthorizationCard.setFill(Color.GREY);
         idText.setVisible(false);
     }

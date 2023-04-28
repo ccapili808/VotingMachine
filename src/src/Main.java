@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Main extends Application {
 
-    private List<Section> ballot;
+    private static List<Section> ballot;
     private Storage storage;
     private int currentPrompt = 1;
     @Override
@@ -18,6 +18,7 @@ public class Main extends Application {
         Scene scene = touchScreen.getScene();
         Group root = touchScreen.getRoot();
         VoteAuthorizationCardScanner voteAuthorizationCardScanner = new VoteAuthorizationCardScanner(root);
+        Printer printer = new Printer(root, voteAuthorizationCardScanner.getPrinterJointObjects());
         Battery battery = new Battery(root);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -112,6 +113,9 @@ public class Main extends Application {
 
     }
 
+    public static List<Section> getBallot(){
+        return ballot;
+    }
 
 
 }
