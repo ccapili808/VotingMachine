@@ -7,6 +7,7 @@ public class Contest extends Item{
      */
     private Candidates contestCandidates;
     private boolean writeIn;
+    private String writeInString;
     private HashMap<String, Boolean> selections = new HashMap<>();
 
     public Contest (String contestName, Candidates contestCandidates, boolean writeIn, int itemID, String sectionName, String itemType) {
@@ -27,7 +28,29 @@ public class Contest extends Item{
     }
 
     public void setSelection (String name, boolean writeIn) {
+        for (String candidate: selections.keySet()
+             ) {
+            selections.put(candidate,false);
+        }
+        if (writeIn) {
+            writeInString = name;
+            selections.put("writeIn", true);
+        }
+        else {
+            selections.put(name,true);
+        }
+    }
 
+    public String getSelection() {
+        for (String candidate: selections.keySet()) {
+            if (selections.get(candidate)) {
+                if (candidate.equals("writeIn")) {
+                    return writeInString;
+                }
+                else return candidate;
+            }
+        }
+        return null;
     }
 
     public Candidates getContestCandidates() {
