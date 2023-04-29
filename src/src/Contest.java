@@ -32,6 +32,7 @@ public class Contest extends Item{
      * @param name the selected candidate's name
      * @param writeIn true if the selection is the write in
      */
+    @Override
     public void setSelection (String name, boolean writeIn) {
         for (String candidate: selections.keySet()
              ) {
@@ -50,6 +51,7 @@ public class Contest extends Item{
      * Get the user's selection
      * @return the string of the candidate currently selected
      */
+    @Override
     public String getSelection() {
         for (String candidate: selections.keySet()) {
             if (selections.get(candidate)) {
@@ -60,6 +62,18 @@ public class Contest extends Item{
             }
         }
         return null;
+    }
+
+    @Override
+    public void resetSelections() {
+        for (String itemCandidate: contestCandidates.getCandidatesList().keySet()
+        ) {
+            selections.put(itemCandidate,false);
+        }
+        if (writeIn) {
+            selections.put("writeIn", false);
+        }
+        System.out.println(selections.toString());
     }
 
     public Candidates getContestCandidates() {

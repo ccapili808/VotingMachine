@@ -18,6 +18,16 @@ public class Item {
         return itemID;
     }
 
+    public String getSelection() {
+        return null;
+    }
+
+    public void setSelection(String name, boolean writeIn) {
+    }
+
+    public void resetSelections() {
+    }
+
     private String sectionName;
     private int itemID;
 

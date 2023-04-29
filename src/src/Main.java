@@ -3,13 +3,15 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main extends Application {
 
-    private static List<Section> ballot;
+    private static List<Section> ballot = new ArrayList<>();
     private static Storage storage;
     public int currentPrompt = 1;
 
@@ -39,7 +41,7 @@ public class Main extends Application {
      */
     public void parseSetUpInfo() {
         storage = new Storage();
-        ballot = new ArrayList<>(storage.getElectionSections());
+        ballot = storage.getElectionSections();
     }
 
     /**
@@ -87,7 +89,11 @@ public class Main extends Application {
      * This function will clear the array that was created in parseSetUpInfo()
      */
     public static void clearSetUpInfo() {
-        ballot = new ArrayList<>(storage.getElectionSections());
+        for(Section section: ballot) {
+            for (Item item: section.getSectionItems()) {
+                item.resetSelections();
+            }
+        }
     }
 
     /**

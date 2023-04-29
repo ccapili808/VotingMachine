@@ -12,13 +12,6 @@ public class Section {
     }
 
     private ArrayList<Item> sectionItems;
-    public Section(String sectionName, ArrayList<Contest> sectionContests, ArrayList<Approval> sectionApprovals, ArrayList<RankChoice> sectionRankChoices, ArrayList<Proposition> sectionProposition) {
-        this.sectionName = sectionName;
-        this.sectionContests = sectionContests;
-        this.sectionApprovals = sectionApprovals;
-        this.sectionRankChoices = sectionRankChoices;
-        this.sectionProposition = sectionProposition;
-    }
 
     public Section(String sectionName, ArrayList<Item> items) {
         this.sectionName = sectionName;
