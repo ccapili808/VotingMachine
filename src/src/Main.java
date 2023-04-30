@@ -14,13 +14,15 @@ public class Main extends Application {
     private static List<Section> ballot = new ArrayList<>();
     private static Storage storage;
     public int currentPrompt = 1;
+    private static TouchScreen touchScreen;
+    private static  VoteAuthorizationCardScanner voteAuthorizationCardScanner;;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        TouchScreen touchScreen = new TouchScreen();
+        touchScreen = new TouchScreen();
         Scene scene = touchScreen.getScene();
         Group root = touchScreen.getRoot();
-        VoteAuthorizationCardScanner voteAuthorizationCardScanner = new VoteAuthorizationCardScanner(root);
+        voteAuthorizationCardScanner = new VoteAuthorizationCardScanner(scene, root);
         Printer printer = new Printer(root, voteAuthorizationCardScanner.getPrinterJointObjects());
         Battery battery = new Battery(root);
         primaryStage.setScene(scene);
@@ -96,6 +98,13 @@ public class Main extends Application {
         }
     }
 
+    public static void turnOnAndOffScreen(){
+        touchScreen.turnOnAndOffScreen();
+    }
+
+    public static boolean isAuthorizationCardInserted(){
+        return voteAuthorizationCardScanner.isCardInserted();
+    }
     /**
      * Stalls the program until the admin types their code on the screen.
      * This function makes GUI objects and a write-in field for the passcode.

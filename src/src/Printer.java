@@ -34,7 +34,9 @@ public class Printer {
         spoilButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                spoilCard();
+                if(Main.isAuthorizationCardInserted()){
+                    spoilCard();
+                }
             }
         });
 
@@ -46,7 +48,9 @@ public class Printer {
         printSelectionButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                printVoteSelection();
+                if(Main.isAuthorizationCardInserted()){
+                    printVoteSelection();
+                }
             }
         });
 
@@ -61,10 +65,10 @@ public class Printer {
      * This function should be called after user has already verified their vote on the touch screen.
      * This function reads user’s votes from temp storage and prints their selection onto the voter card.
      */
+    //TODO: Fix printer so that it can handle more items
     private void printVoteSelection() {
         List<Section> ballot = Main.getBallot();
 
-        //TODO: Figure out how to get answers
         for(Section s: ballot ){
             System.out.println("Section:" + s.getSectionName());
             Text section = new Text(s.getSectionName());
@@ -72,11 +76,19 @@ public class Printer {
             vBox.getChildren().add(section);
 
             for(Item i: s.getSectionItems()){
-                Text question = new Text(i.getItemName() +"\n");
+                Text question = new Text(i.getItemName());
                 question.setWrappingWidth(250);
                 vBox.getChildren().add(question);
-                System.out.println(i.getItemName());
-                System.out.println(i.getItemType());
+
+                if(i.getSelection() != null){
+                    Text selection = new Text("\t" + i.getItemName() + "\n");
+                    selection.setWrappingWidth(250);
+                    vBox.getChildren().add(selection);
+                }else{
+                    Text selection = new Text("\t NO SELECTION" + "\n");
+                    selection.setWrappingWidth(250);
+                    vBox.getChildren().add(selection);
+                }
             }
         }
 

@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Battery {
+    private final int DISCHARGERATE = 10;
     private Group batteryRoot;
     private Circle externalLED;
     private String powerSource;
@@ -18,7 +19,7 @@ public class Battery {
     private int xOffset = 1150;
     private int yOffset = 50;
     private float batteryPercentage = 100;
-    private boolean isRunning = true;
+    private boolean hasPower = true;
     Button connectButton;
     ImageView batteryImage;
 
@@ -29,6 +30,7 @@ public class Battery {
         root.getChildren().add(batteryRoot);
         Thread batteryLevel = powerMachine();
         batteryLevel.start();
+
     }
 
     private void batteryGUISetup(){
@@ -62,7 +64,7 @@ public class Battery {
                     if (System.currentTimeMillis() - startTime > 2 * 1000) {
                         manualShutDown();
                     } else {
-                        //Maybe turn off screen without clearing info
+                        Main.turnOnAndOffScreen();
                     }
                 }
             }
@@ -114,6 +116,7 @@ public class Battery {
             voltage = 0;
             connectButton.setText("Connect Outlet");
         }else{
+            hasPower = true;
             powerSource = "outlet";
             voltage = 120;
             connectButton.setText("Disconnect Outlet");
@@ -157,15 +160,16 @@ public class Battery {
     }
 
     private Thread powerMachine(){
-        Thread thread = new Thread(() -> {
-            while(isRunning){
+        return new Thread(() -> {
+            while(hasPower){
                 try{
                     Thread.sleep(1000);
                     if(powerSource.equals("battery")){
                         if(batteryPercentage > 0){
-                            batteryPercentage -= 5;
+                            batteryPercentage -= DISCHARGERATE;
                         } else{
-                            //TODO: Add functionality when battery is dead
+                            //TODO: ShutDown screen when power is loss
+                            hasPower = false;
                         }
                         updateBatteryImageAndExternalLED();
                     }
@@ -174,14 +178,13 @@ public class Battery {
                 }
             }
         });
-        return thread;
     }
 
     /**
      * Clears setup info and turns off screen
      */
     private void manualShutDown(){
-        //TODO: SHUTDOWN
+        Main.turnOnAndOffScreen();
         Main.clearSetUpInfo();
         System.out.println("SHUT DOWN");
     }

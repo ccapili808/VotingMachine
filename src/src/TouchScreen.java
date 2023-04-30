@@ -31,8 +31,9 @@ public class TouchScreen {
     private double textSizeLevel = 12;
     private VirtualKeypad keyboard = new VirtualKeypad();
     ColorAdjust colorAdjust;
-    Rectangle background = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    Rectangle background;
     private List<Text> textList = new ArrayList<>();
+    private boolean isScreenOn = true;
 
     //This is where we will temporarily store prompts and options passed in
     List<String> prompts;
@@ -42,7 +43,6 @@ public class TouchScreen {
     VBox[] pages;
     int currentPage = 0;
 
-    //TODO: CHANGE NAME
     //This group is so that gui objects outside of touch screen can be added to the scene
     //without being affected by the functionality of touchscreen.
     private Group mainRoot;
@@ -55,7 +55,7 @@ public class TouchScreen {
         colorAdjust.setBrightness(0.0);
         //masterLanguage = "English";
         textSizeLevel = 12;
-        Rectangle background = new Rectangle(WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
+        background = new Rectangle(WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
         background.setStroke(Color.BLACK);
         this.root = new Group();
         this.mainRoot = new Group();
@@ -390,6 +390,19 @@ public class TouchScreen {
         });
         return hideOrShowKeyboard;
     }
+
+    public void turnOnAndOffScreen(){
+        if(isScreenOn){
+            background.toFront();
+            background.setFill(Color.BLACK);
+            isScreenOn = false;
+        }else{
+            background.toBack();
+            background.setFill(Color.WHITE);
+            isScreenOn = true;
+        }
+    }
+
 
     //USED FOR STORING VOTES AND PAGES
     public void setPages(int numPages) {

@@ -1,31 +1,43 @@
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.robot.Robot;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class VoteAuthorizationCardScanner {
     private Group voteCardRoot;
+    private Scene scene;
     private int xOffset = 825;
     private final double PANEL_WIDTH = 300;
     private final double PANEL_HEIGHT = 600;
-    private Rectangle voteAuthorizationCard;
-    private VBox vBox;
-    private Group printerJointObjects;
-
-    private boolean cardInserted;
-    private boolean staffOverride = true;
-
-    private final long LIMIT = 10000000000L;
-    private long id = 0;
-
-    Text idText;
-
     private final double SCANNER_WIDTH = 250;
     private final double SCANNER_HEIGHT = 50;
-    public VoteAuthorizationCardScanner(Group root) {
+    private Text scannerText;
+    private Rectangle voteAuthorizationCard;
+    private VBox vBox;
+    private Group printerJointObjects; //Vbox to add text to, and rectangle to spoil ballot
+
+    private static boolean cardInserted = false;
+    private boolean staffOverride = true; //TODO: Remove for main method instead
+
+    private long id = 0;
+    private Text idText;
+
+    public VoteAuthorizationCardScanner(Scene scene, Group root) {
+        this.scene = scene;
         voteCardRoot = new Group();
         printerJointObjects = new Group();
         cardScannerGUISetup();
@@ -48,6 +60,16 @@ public class VoteAuthorizationCardScanner {
         voteAuthorizationCard.setX(xOffset +5);
         voteAuthorizationCard.setY(5);
 
+        scannerText = new Text("Click to Insert Card");
+        scannerText.setX(xOffset + 100);
+        scannerText.setY(PANEL_HEIGHT - 30);
+        scannerText.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                insertOrRemoveCard();
+            }
+        });
+
         Rectangle scanner = new Rectangle(SCANNER_WIDTH, SCANNER_HEIGHT, Color.WHITE);
         scanner.setStroke(Color.BLACK);
         scanner.setX(xOffset + 25);
@@ -55,11 +77,7 @@ public class VoteAuthorizationCardScanner {
         scanner.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if(!cardInserted){
-                    insertCard();
-                }else if(cardInserted && staffOverride){
-                    removeCard();
-                }
+                insertOrRemoveCard();
             }
         });
 
@@ -71,18 +89,26 @@ public class VoteAuthorizationCardScanner {
         vBox.setTranslateX(xOffset+10);
         vBox.setTranslateY(10);
 
-
         voteCardRoot.getChildren().add(panel);
-        voteCardRoot.getChildren().add(voteAuthorizationCard);
+        voteCardRoot.getChildren().add(printerJointObjects);
         voteCardRoot.getChildren().add(scanner);
+        voteCardRoot.getChildren().add(scannerText);
         voteCardRoot.getChildren().add(vBox);
         voteCardRoot.getChildren().add(idText);
-        voteCardRoot.getChildren().add(printerJointObjects);
 
     }
 
-    public Group getPrinterJointObjects(){
+    private void insertOrRemoveCard(){
+        if(!cardInserted){
+            insertCard();
+            scannerText.setText("Click to Remove Card");
+        }else if(cardInserted && staffOverride){
+            removeCard();
+            scannerText.setText("Click to Insert Card");
+        }
+    }
 
+    public Group getPrinterJointObjects(){
         return printerJointObjects;
     }
 
@@ -107,13 +133,35 @@ public class VoteAuthorizationCardScanner {
         vBox.getChildren().clear();
         voteAuthorizationCard.setFill(Color.GREY);
         idText.setVisible(false);
+        storeCard(); //TODO: Storing card will be done in main
     }
 
     /**
      * Activates the vote authorization card slot to store the finalized voter card in the DRE system.
      */
     private void storeCard(){
+        Robot robot = new Robot();
+        WritableImage image = new WritableImage((int) (PANEL_WIDTH -10), (int) (PANEL_HEIGHT -80));
+        final Point2D windowCoord = new Point2D(scene.getWindow().getX(), scene.getWindow().getY());
+        final Point2D sceneCoord = new Point2D(scene.getX(), scene.getY());
 
+        image = robot.getScreenCapture(image,
+                windowCoord.getX() + sceneCoord.getX() + xOffset + 5,
+                windowCoord.getY() + sceneCoord.getY() + 5,
+                PANEL_WIDTH -10, PANEL_HEIGHT -80);
+
+        try {
+            File file = new File("./VoteAuthorizationCards/" + id + ".png");
+            RenderedImage renderedImage = SwingFXUtils.fromFXImage(image, null);
+            ImageIO.write(renderedImage, "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public boolean isCardInserted(){
+        return cardInserted;
     }
 
     /**
@@ -121,6 +169,7 @@ public class VoteAuthorizationCardScanner {
      */
     long generateID(){
         // 10 digits.
+        long LIMIT = 10000000000L;
         long id = System.currentTimeMillis() % LIMIT;
         if ( id <= this.id ) {
             id = (this.id + 1) % LIMIT;
