@@ -10,6 +10,16 @@ public class Contest extends Item{
     private String writeInString;
     private HashMap<String, Boolean> selections = new HashMap<>();
 
+
+    /**
+     * Constructor for contest. Used to create ballot items when parsing setup json file.
+     * @param contestName
+     * @param contestCandidates
+     * @param writeIn
+     * @param itemID
+     * @param sectionName
+     * @param itemType
+     */
     public Contest (String contestName, Candidates contestCandidates, boolean writeIn, int itemID, String sectionName, String itemType) {
         super(itemType, contestName,sectionName,itemID);
         this.contestCandidates = contestCandidates;
@@ -23,6 +33,11 @@ public class Contest extends Item{
         }
     }
 
+    /**
+     * Check if the item has a write in field.
+     * @return
+     */
+    @Override
     public boolean isWriteIn() {
         return writeIn;
     }
@@ -64,6 +79,10 @@ public class Contest extends Item{
         return null;
     }
 
+
+    /**
+     * This is used for reseting the selections from main
+     */
     @Override
     public void resetSelections() {
         for (String itemCandidate: contestCandidates.getCandidatesList().keySet()
@@ -76,8 +95,17 @@ public class Contest extends Item{
         System.out.println(selections.toString());
     }
 
-    public Candidates getContestCandidates() {
-        return contestCandidates;
+    /**
+     * This method returns the candidate hashmap for contest items
+     * @return the candidate hashmap (Name,Party)
+     */
+    @Override
+    public HashMap<String,String> getContestOptions() {
+        return (HashMap)contestCandidates.getCandidatesList();
     }
+
+//    public Candidates getContestCandidates() {
+//        return contestCandidates;
+//    }
 
 }

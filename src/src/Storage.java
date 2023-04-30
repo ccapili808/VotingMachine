@@ -26,6 +26,10 @@ public class Storage {
     private static final String salt = "abcdefgh";
 
     private HashMap<String, HashMap<String,Integer>> voteTotals = new HashMap<>();
+
+    /**
+     * Constructor for Storage. calls parseSetUp();
+     */
     public Storage() {
         try {
             File myObj = new File("voteResults.txt");
@@ -44,6 +48,12 @@ public class Storage {
             throw new RuntimeException(e);
         }
     };
+
+    /**
+     * This method encrypts and saves an individual voting sessions selections.
+     * The vote includes a date and time stamp at the top, and voting sessions are split
+     * by an empty line.
+     */
     public void saveVote() {
         try {
             File myObj = new File("allVotes.txt");
@@ -87,9 +97,17 @@ public class Storage {
         } catch (IOException e) {
             //exception handling left as an exercise for the reader
         }
-
+        countVote();
 
     }
+
+    /**
+     * This method runs ballot-parser.exe to parse example_ballot.txt and create our setup json file.
+     * It then parses the json file and organizes the ballot sections and items.
+     * Additionally, it reads voteResults.txt to get the voting results up to this point in case
+     * there was a power outage.
+     * @throws IOException
+     */
     private void parseSetUp() throws IOException {
         ProcessBuilder builder = new ProcessBuilder("ballot-parser.exe");
         builder.redirectInput(new File("example_ballot.txt"));
@@ -238,6 +256,11 @@ public class Storage {
         }
 
     }
+
+    /**
+     * This method adds the current voting session's selections to the total vote counts, encrypts them and
+     * saves them to voteResults.txt
+     */
     public void countVote() {
         for (Section section: Main.getBallot()
              ) {
@@ -289,6 +312,10 @@ public class Storage {
             //System.out.println("An error occurred.");
             e.printStackTrace();
         }
+        /**
+         * This decrypts the results for showcasing the encryption/decryption and that
+         * the count is working properly.
+         */
         try {
             File myObj = new File("voteResultsDecrypted.txt");
             if (myObj.createNewFile()) {
@@ -329,6 +356,13 @@ public class Storage {
     }
 
 
+    /**
+     * This method encrypts a string using AES and a password.
+     * The encryption/decryption password for each machine should be provided
+     * to election officials
+     * @param strToEncrypt the string to encrypt
+     * @return the encrypted string
+     */
     private String encrypt(String strToEncrypt) {
         try
         {
@@ -354,6 +388,9 @@ public class Storage {
         return null;
     }
 
+    /**
+     * This method decrypts the encrypted vote file to "decryptedVotes.txt" for auditing purposes.
+     */
     public void decrypt() {
         try {
             File myObj = new File("decryptedVotes.txt");
@@ -393,6 +430,13 @@ public class Storage {
             e.printStackTrace();
         }
     }
+
+    /**
+     * This method decrypts a given string using the decryption password. The password
+     * for each voting machine should be given to election officials.
+     * @param strToDecrypt
+     * @return
+     */
     public String decryptString(String strToDecrypt) {
         try
         {
@@ -418,22 +462,42 @@ public class Storage {
         return null;
     }
 
+    /**
+     * This method just returns true for the demo
+     * @return true
+     */
     public boolean validPriStorage() {
         return true;
     }
 
+    /**
+     * This method just returns true for the demo
+     * @return true
+     */
     public boolean validBackStorage() {
         return true;
     }
 
+    /**
+     * This method just returns true for the demo
+     * @return true
+     */
     public boolean validSetupStorage() {
         return true;
     }
 
+    /**
+     * This method returns the header info for the election
+     * @return
+     */
     public Header getHeaderInfo() {
         return headerInfo;
     }
 
+    /**
+     * This method returns the election's sections
+     * @return the list of sections
+     */
     public List<Section> getElectionSections() {
         return electionSections;
     }

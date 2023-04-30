@@ -8,6 +8,16 @@ public class Proposition extends Item{
     private String propDescription;
     private List<String> options;
     private HashMap<String, Boolean> selections = new HashMap<>();
+
+    /**
+     * Constructor, called from storage to create propositions
+     * @param propDescription
+     * @param propName
+     * @param options
+     * @param itemID
+     * @param sectionName
+     * @param itemType
+     */
     public Proposition (String propDescription, String propName, List<String> options, int itemID, String sectionName, String itemType) {
         super(itemType,propName,sectionName,itemID);
         this.propDescription = propDescription;
@@ -18,11 +28,21 @@ public class Proposition extends Item{
         }
     }
 
-    public String getPropDescription() {
+    /**
+     * This method returns a description for propositions. Returns "" for all other items since they have no description
+     * @return the prop description
+     */
+    @Override
+    public String getDescription() {
         return propDescription;
     }
 
-    public List<String> getOptions() {
+    /**
+     * This method returns the list of proposition options
+     * @return the prop options
+     */
+    @Override
+    public List<String> getPropOptions() {
         return options;
     }
 
@@ -53,6 +73,9 @@ public class Proposition extends Item{
         return null;
     }
 
+    /**
+     * This resets the single voting session's selections from main
+     */
     @Override
     public void resetSelections() {
         for (String itemOption:options
