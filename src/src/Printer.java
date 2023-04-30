@@ -70,7 +70,6 @@ public class Printer {
         List<Section> ballot = Main.getBallot();
 
         for(Section s: ballot ){
-            System.out.println("Section:" + s.getSectionName());
             Text section = new Text(s.getSectionName());
             section.setUnderline(true);
             vBox.getChildren().add(section);

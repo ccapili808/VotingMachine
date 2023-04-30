@@ -151,7 +151,7 @@ public class VoteAuthorizationCardScanner {
                 PANEL_WIDTH -10, PANEL_HEIGHT -80);
 
         try {
-            File file = new File("./VoteAuthorizationCards/" + id + ".png");
+            File file = new File("./Resources/VoteAuthorizationCards/" + id + ".png");
             RenderedImage renderedImage = SwingFXUtils.fromFXImage(image, null);
             ImageIO.write(renderedImage, "png", file);
         } catch (IOException e) {
