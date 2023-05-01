@@ -131,8 +131,6 @@ public class TouchScreen {
      *   HBox below.
      */
     private VBox displayQuestion(String promptString, String[] choiceList) {
-        // TODO: Right here would be a perfect location to translate
-        //  everything before putting them into their HBoxes :)
 
         int numOpts = 3;  // Creates n-many option choices, not including write-in
         VBox page = new VBox();
@@ -154,23 +152,13 @@ public class TouchScreen {
         String answerString = Translator.translateLanguage("Answer Choice ", masterLanguage);
         for(int i = 0; i < numOpts; i++){
             choices[i] = new HBox();
-            RadioButton rb = new RadioButton();
-            choices[i].getChildren().add(rb);
-            choices[i].setOnMousePressed(this::select);
-            Text text = new Text("\t" + answerString + i);  // Create Text Obj
-            choices[i].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
-            choices[i].getChildren().add(text);
+            choices[i] = setGUIFormat(choices[i], answerString);
         }
 
         // 3. Write-in
         HBox writeIn = new HBox();
-        RadioButton rb = new RadioButton();
-        writeIn.getChildren().add(rb);
-        writeIn.setOnMousePressed(this::select);
         String writeInString = Translator.translateLanguage("Write-in Field...", masterLanguage);
-        Text writeInText = new Text("\t" + writeInString);  // Create Text Obj
-        writeIn.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
-
+        writeIn = setGUIFormat(writeIn, writeInString);
 
         // 4. Set Actions on each radio button
         choices[choices.length-1] = writeIn;
@@ -186,12 +174,14 @@ public class TouchScreen {
         return page;
     }
 
-    private HBox setGUIFormat(HBox hbox, Text textField, int xPos, int yPos) {
-        textList.add(textField);
-        hbox.getChildren().add(textField);
-        hbox.setTranslateX(hbox.getTranslateX() + xPos);
-        hbox.setTranslateY(hbox.getTranslateY() + yPos);
-        hbox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
+    private HBox setGUIFormat(HBox hbox, String str) {
+        RadioButton rb = new RadioButton();
+        hbox.getChildren().add(rb);
+        hbox.setOnMousePressed(this::select);
+        Text text = new Text("\t" + str);  // Create Text Obj
+        hbox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
+        hbox.getChildren().add(text);
+
         hbox.setPadding(new Insets(10));
 
         return hbox;
@@ -338,9 +328,13 @@ public class TouchScreen {
 
     private void addNextBackBtns(){
         Button nextBtn = new Button(Translator.translateLanguage("Next", masterLanguage));
-        nextBtn.setTranslateX(nextBtn.getTranslateX() + 250);
+        nextBtn.setTranslateX(nextBtn.getTranslateX() + 580);
+        nextBtn.setTranslateY(nextBtn.getTranslateY() + 300);
         nextBtn.setOnAction(e -> nextPage());
+
         Button backBtn = new Button(Translator.translateLanguage("Back", masterLanguage));
+        backBtn.setTranslateX(backBtn.getTranslateX() + 150);
+        backBtn.setTranslateY(backBtn.getTranslateY() + 300);
         backBtn.setOnAction(e -> previousPage());
 
         root.getChildren().addAll(nextBtn, backBtn);
