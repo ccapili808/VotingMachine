@@ -13,12 +13,13 @@ public class Main extends Application {
 
     private static List<Section> ballot = new ArrayList<>();
     private static Storage storage;
-    public int currentPrompt = 1;
+    public int currentPrompt = 0;
     private static TouchScreen touchScreen;
     private static  VoteAuthorizationCardScanner voteAuthorizationCardScanner;;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        parseSetUpInfo();  // Call this before touchscreen for GUI setup :)
         touchScreen = new TouchScreen();
         Scene scene = touchScreen.getScene();
         Group root = touchScreen.getRoot();
@@ -27,7 +28,6 @@ public class Main extends Application {
         Battery battery = new Battery(root);
         primaryStage.setScene(scene);
         primaryStage.show();
-        parseSetUpInfo();
     }
 
     public static void main(String[] args) {

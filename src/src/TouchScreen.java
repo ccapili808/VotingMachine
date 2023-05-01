@@ -1,5 +1,3 @@
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventTarget;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
@@ -16,10 +14,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TouchScreen {
     private final double SCENE_WIDTH = 1300;
@@ -130,9 +125,9 @@ public class TouchScreen {
      *   some type of "Items obj". Then just insert each arg in it's respective
      *   HBox below.
      */
-    private VBox displayQuestion(String promptString, String[] choiceList) {
+    private VBox displayQuestion(String promptString, String[] choiceList, boolean proposition) {
 
-        int numOpts = 3;  // Creates n-many option choices, not including write-in
+        int numOpts = choiceList.length;  // Creates n-many option choices, not including write-in
         VBox page = new VBox();
         page.setSpacing(10);
 
@@ -148,9 +143,16 @@ public class TouchScreen {
         textList.add(prompt);
 
         // 2. Choices
+        // TODO: Figure out why translator won't translate?!  乁( ⁰͡ Ĺ̯ ⁰͡ ) ㄏ
         HBox[] choices = new HBox[numOpts+1];
-        String answerString = Translator.translateLanguage("Answer Choice ", masterLanguage);
+        String answerString = "";
         for(int i = 0; i < numOpts; i++){
+            if(proposition){  // Only Translate Propositions (Yes & No)
+                answerString = Translator.translateLanguage(choiceList[i], masterLanguage);
+            }else{
+                answerString = choiceList[i];
+            }
+
             choices[i] = new HBox();
             choices[i] = setGUIFormat(choices[i], answerString);
         }
@@ -181,6 +183,7 @@ public class TouchScreen {
         Text text = new Text("\t" + str);  // Create Text Obj
         hbox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
         hbox.getChildren().add(text);
+        textList.add(text);
 
         hbox.setPadding(new Insets(10));
 
@@ -354,7 +357,7 @@ public class TouchScreen {
         root.getChildren().add(keyboard);
     }
 
-    private static void choiceOnClick(HBox[] choices) {
+    private void choiceOnClick(HBox[] choices) {
         //turn the selected choice's background to green and the rest to white
         for (HBox choice : choices) {
             choice.setOnMouseClicked(e -> {
@@ -400,32 +403,52 @@ public class TouchScreen {
 
     //USED FOR STORING VOTES AND PAGES
     public void setPages(int numPages) {
-        this.pages = new VBox[numPages];
-        pages[0] = displayQuestion("What is your favorite color?", new String[]{"Red", "Blue", "Green"});
-        pages[1] = displayQuestion("What is your favorite animal?", new String[]{"Dog", "Cat", "Bird"});
-        pages[2] = displayQuestion("What is your favorite food?", new String[]{"Pizza", "Burger", "Salad"});
-        //iterate through each page and give them an id
-        for (int i = 0; i < pages.length; i++) {
-            if(i == 0) {
-                pages[i].setVisible(true);
-            } else {
-                pages[i].setVisible(false);
+        List<VBox> pagesTemp = new ArrayList<>();  // Arbitrary # of pages.
+
+        Main main = new Main();
+        Item prompts = main.getNextPrompt();
+        do {
+            String question = prompts.getItemName();  // President, Governor, Proposition, etc.
+
+            if(Objects.equals(prompts.getItemType(), "Contest")){
+                ArrayList<String> choices = new ArrayList<>();
+
+                for(String candidate : prompts.getContestOptions().keySet()){  // Dem, Rep, Ind, etc.
+                    choices.add(candidate + " (" + prompts.getContestOptions().get(candidate) + ")");
+                }
+
+                String[] choice_array = Arrays.copyOf(choices.toArray(), choices.size(), String[].class);
+                pagesTemp.add(displayQuestion(question, choice_array, false));
+
+            }else{
+                String description = prompts.getDescription();  // Description of Prop (only happens w/ Props)
+
+                ArrayList<String> choices = (ArrayList<String>) prompts.getPropOptions();  // Yes, No, etc.
+
+                String[] choice_array = Arrays.copyOf(choices.toArray(), choices.size(), String[].class);
+                pagesTemp.add(displayQuestion(question + "\n" + description, choice_array, true));
             }
-            pages[i].setId("page" + i);
+
+            prompts = main.getNextPrompt();
+        }while (prompts != null);
+
+
+        //iterate through each page and give them an id. Sets the first visible.
+        for (int i = 0; i < pagesTemp.size(); i++) {
+            pagesTemp.get(i).setVisible(i == 0);
+            pagesTemp.get(i).setId("page" + i);
         }
-        root.getChildren().addAll(pages[0], pages[1], pages[2]);
+
+        // Move everything to Global 'Pages' Array, since everything
+        // is hard coded w/ it atm :)
+        pages = new VBox[pagesTemp.size()];
+        for(int i = 0; i < pages.length; i++){
+            pages[i] = pagesTemp.get(i);
+        }
+
+        // Send pages to root
+        for(VBox page : pages){
+            root.getChildren().add(page);
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
