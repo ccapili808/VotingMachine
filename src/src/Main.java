@@ -13,9 +13,10 @@ public class Main extends Application {
 
     private static List<Section> ballot = new ArrayList<>();
     private static Storage storage;
-    public int currentPrompt = 0;
+    private static int currentPrompt = 0;
     private static TouchScreen touchScreen;
-    private static  VoteAuthorizationCardScanner voteAuthorizationCardScanner;;
+    private static  VoteAuthorizationCardScanner voteAuthorizationCardScanner;
+    private static Printer printer;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -24,7 +25,7 @@ public class Main extends Application {
         Scene scene = touchScreen.getScene();
         Group root = touchScreen.getRoot();
         voteAuthorizationCardScanner = new VoteAuthorizationCardScanner(scene, root);
-        Printer printer = new Printer(root, voteAuthorizationCardScanner.getPrinterJointObjects());
+        printer = new Printer(root, voteAuthorizationCardScanner.getPrinterJointObjects());
         Battery battery = new Battery(root);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -41,7 +42,7 @@ public class Main extends Application {
      * The question type will determine whether the question is multi select or single select.
      * The array of choices, will store all the prompt choices. The array of selections will store all the user selections.
      */
-    public void parseSetUpInfo() {
+    public static void parseSetUpInfo() {
         storage = new Storage();
         ballot = storage.getElectionSections();
     }
@@ -52,7 +53,7 @@ public class Main extends Application {
      * Returns null if itemID doesn't exist in ballot
      * @param promptNumber - the integer value of the prompt to be retrieved.
      */
-    public Item getPrompt(int promptNumber) {
+    public static Item getPrompt(int promptNumber) {
         for (Section section: ballot) {
             if (section.getSectionItems() != null) {
                 for (Item item: section.getSectionItems()) {
@@ -70,7 +71,7 @@ public class Main extends Application {
      * Gets next prompt from prompts array. When the user finishes select the answer in the current prompt.
      * If at last prompt, will return null
      */
-    public Item getNextPrompt() {
+    public static Item getNextPrompt() {
         return getPrompt(currentPrompt+1);
     }
 
@@ -78,7 +79,7 @@ public class Main extends Application {
      * Gets previous prompt from prompt array. When the user wants to go to the previous prompt to change the selection.
      * If at first prompt, return the first prompt again
      */
-    public Item getPrevPrompt() {
+    public static Item getPrevPrompt() {
         if (currentPrompt == 1) {
             return getPrompt(1);
         }
@@ -105,12 +106,13 @@ public class Main extends Application {
     public static boolean isAuthorizationCardInserted(){
         return voteAuthorizationCardScanner.isCardInserted();
     }
+
     /**
      * Stalls the program until the admin types their code on the screen.
      * This function makes GUI objects and a write-in field for the passcode.
      * Once a successful passcode is entered, the function calls removeCard() and idlePage().
      */
-    public void getAdminApproval() {
+    public static void getAdminApproval() {
 
     }
 
@@ -119,21 +121,21 @@ public class Main extends Application {
      * validPriStorage, validBackStorage, validSetupStorage return true.
      * If any of these functions return false, then the setup failed, and this function should return false.
      */
-    public boolean validSetup() {
+    public static boolean validSetup() {
         return (storage.validPriStorage() && storage.validBackStorage() && storage.validSetupStorage());
     }
 
     /**
      * Turns on the external led. Used when DRE system is operated with battery power.
      */
-    public void turnLedOn() {
+    public static void turnLedOn() {
 
     }
 
     /**
      * Turns off the external led. Used when DRE system is operated with outlet power.
      */
-    public void turnLedOff() {
+    public static void turnLedOff() {
 
     }
 

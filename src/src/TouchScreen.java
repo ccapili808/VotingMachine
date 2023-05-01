@@ -370,6 +370,22 @@ public class TouchScreen {
                 choice.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
                 rb = (RadioButton) choice.getChildren().get(0);
                 rb.setSelected(true);
+
+                //Set the voter selection for the item
+                String choiceText = ((Text)choice.getChildren().get(1)).getText();
+                if (choiceText.split("\\(").length>1) {
+                    choiceText = choiceText.split("\\(")[0].substring(1, choiceText.split("\\(")[0].length() - 1);
+                }
+                else {
+                    choiceText = choiceText.substring(1, choiceText.length());
+                }
+                Item currentItem = Main.getPrompt(currentPage+1);
+                if (choiceText.contains("Write-in")) {
+                    currentItem.setSelection(choiceText,true);
+                }
+                else {
+                    currentItem.setSelection(choiceText, false);
+                }
             });
         }
     }

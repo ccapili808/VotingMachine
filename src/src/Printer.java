@@ -80,7 +80,7 @@ public class Printer {
                 vBox.getChildren().add(question);
 
                 if(i.getSelection() != null){
-                    Text selection = new Text("\t" + i.getItemName() + "\n");
+                    Text selection = new Text("\t" + i.getSelection() + "\n");
                     selection.setWrappingWidth(250);
                     vBox.getChildren().add(selection);
                 }else{
