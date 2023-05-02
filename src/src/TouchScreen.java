@@ -137,6 +137,10 @@ public class TouchScreen {
         //Add prompts here:
         promptString = Translator.translateLanguage(promptString, masterLanguage);
         Text prompt = new Text(promptString);
+        prompt.setWrappingWidth(200);
+//        Label promptLabel = new Label(promptString);
+//        promptLabel.setWrapText(true);
+//        promptLabel.setPrefWidth(200);
         promptBox.getChildren().add(prompt);  // Fluff
         promptBox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
         promptBox.setPadding(new Insets(10));
@@ -191,11 +195,6 @@ public class TouchScreen {
     }
 
     private void nextPage() {
-        //go to next page and set all other pages in JavaFX to invisible
-        //if last page go to the first page
-        //you can use the VBox[] pages where each Vbox has an id of "page" + i
-        //where i is the page number
-        //you can use the method setVisible(boolean) to set the page to visible or invisible
         if(currentPage < pages.length - 1){
             pages[currentPage].setVisible(false);
             currentPage++;
@@ -205,7 +204,7 @@ public class TouchScreen {
             currentPage = 0;
             pages[currentPage].setVisible(true);
         }
-
+        updateSelections();
     }
 
     private void previousPage() {
@@ -223,6 +222,11 @@ public class TouchScreen {
             currentPage = pages.length - 1;
             pages[currentPage].setVisible(true);
         }
+        updateSelections();
+    }
+
+    private void updateSelections() {
+
     }
 
     private void resetRoot() {
@@ -420,9 +424,8 @@ public class TouchScreen {
     //USED FOR STORING VOTES AND PAGES
     public void setPages(int numPages) {
         List<VBox> pagesTemp = new ArrayList<>();  // Arbitrary # of pages.
-
-        Main main = new Main();
-        Item prompts = main.getNextPrompt();
+       // Main main = new Main();
+        Item prompts = Main.getNextPrompt();
         do {
             String question = prompts.getItemName();  // President, Governor, Proposition, etc.
 
@@ -445,7 +448,7 @@ public class TouchScreen {
                 pagesTemp.add(displayQuestion(question + "\n" + description, choice_array, true));
             }
 
-            prompts = main.getNextPrompt();
+            prompts = Main.getNextPrompt();
         }while (prompts != null);
 
 
