@@ -280,10 +280,15 @@ public class TouchScreen {
         promptBox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
         promptBox.setPadding(new Insets(10));
         textList.add(prompt);
-
+        HBox[] choices;
         // 2. Choices
         // TODO: Figure out why translator won't translate?!  乁( ⁰͡ Ĺ̯ ⁰͡ ) ㄏ
-        HBox[] choices = new HBox[numOpts+1];
+        if (proposition) {
+            choices = new HBox[numOpts];
+        }
+        else {
+            choices = new HBox[numOpts+1];
+        }
         String answerString = "";
         for(int i = 0; i < numOpts; i++){
             if(proposition){  // Only Translate Propositions (Yes & No)
@@ -296,13 +301,15 @@ public class TouchScreen {
             choices[i] = setGUIFormat(choices[i], answerString);
         }
 
-        // 3. Write-in
-        HBox writeIn = new HBox();
-        String writeInString = Translator.translateLanguage("Write-in Field...", masterLanguage);
-        writeIn = setGUIFormat(writeIn, writeInString);
+        // 3. Write-in if contest
+        if (!proposition) {
+            HBox writeIn = new HBox();
+            String writeInString = Translator.translateLanguage("Write-in Field...", masterLanguage);
+            writeIn = setGUIFormat(writeIn, writeInString);
+            choices[choices.length-1] = writeIn;
+        }
 
         // 4. Set Actions on each radio button
-        choices[choices.length-1] = writeIn;
         choiceOnClick(choices);
 
         // 4. Add questionnaire to GUI display.

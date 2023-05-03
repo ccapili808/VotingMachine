@@ -31,15 +31,13 @@ public class Storage {
      * Constructor for Storage. calls parseSetUp();
      */
     public Storage() {
+        //if fresh voting session, create voteResults file
         try {
             File myObj = new File("voteResults.txt");
             if (myObj.createNewFile()) {
-                //System.out.println("File created: " + myObj.getName());
             } else {
-                //System.out.println("File already exists.");
             }
         } catch (IOException e) {
-            //System.out.println("An error occurred.");
             e.printStackTrace();
         }
         try {
@@ -58,27 +56,16 @@ public class Storage {
         try {
             File myObj = new File("allVotes.txt");
             if (myObj.createNewFile()) {
-                //System.out.println("File created: " + myObj.getName());
             } else {
-                //System.out.println("File already exists.");
             }
         } catch (IOException e) {
-            //System.out.println("An error occurred.");
             e.printStackTrace();
         }
-//        for (Section section: Main.getBallot()
-//             ) {
-//            for (Item item: section.getSectionItems()
-//                 ) {
-//                if(item.getItemName().equals("Governor")) {
-//                    item.setSelection("Steven Johnson", false);
-//                }
-//            }
-//        }
         try(FileWriter fw = new FileWriter("allVotes.txt", true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw))
         {
+            // add timestamp to each vote?
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
             out.println(encrypt(dtf.format(now)));
@@ -95,8 +82,9 @@ public class Storage {
             }
             out.println();
         } catch (IOException e) {
-            //exception handling left as an exercise for the reader
+
         }
+        //call countVote() to add to the vote totals
         countVote();
 
     }
@@ -145,7 +133,7 @@ public class Storage {
                             String name = candidateNode.get("name").asText();
                             String party = candidateNode.get("party").asText();
 
-                            // Do something with candidate information
+                            // Add candidates to HashMap
                             contestCandidates.put(name,party);
 
                         }
@@ -229,6 +217,7 @@ public class Storage {
         }
         BufferedReader reader;
 
+        //Read in existing vote totals if system shuts down for some reason
         try {
             reader = new BufferedReader(new FileReader("voteResults.txt"));
             String line = reader.readLine();
@@ -262,6 +251,7 @@ public class Storage {
      * saves them to voteResults.txt
      */
     public void countVote() {
+        //get the current selections and add them to the totals
         for (Section section: Main.getBallot()
              ) {
             for (Item item: section.getSectionItems()
@@ -282,6 +272,7 @@ public class Storage {
                 }
             }
         }
+        //rewrite and encrypt the voteResults file with the new vote total
         try {
             File myObj = new File("voteResults.txt");
             if (myObj.createNewFile()) {
@@ -306,22 +297,18 @@ public class Storage {
                     out.println();
                 }
             } catch (IOException e) {
-                //exception handling left as an exercise for the reader
             }
         } catch (IOException e) {
-            //System.out.println("An error occurred.");
             e.printStackTrace();
         }
-        /**
+        /*
          * This decrypts the results for showcasing the encryption/decryption and that
          * the count is working properly.
          */
         try {
             File myObj = new File("voteResultsDecrypted.txt");
             if (myObj.createNewFile()) {
-                //System.out.println("File created: " + myObj.getName());
             } else {
-                //System.out.println("Overwriting file");
                 myObj.delete();
                 myObj.createNewFile();
             }
@@ -335,10 +322,7 @@ public class Storage {
                     String line = reader.readLine();
 
                     while (line != null) {
-                        //System.out.println(line);
-                        //System.out.println(decryptString(line));
                         out.println(decryptString(line));
-                        // read next line
                         line = reader.readLine();
                     }
 
@@ -347,10 +331,8 @@ public class Storage {
                     e.printStackTrace();
                 }
             } catch (IOException e) {
-                //exception handling left as an exercise for the reader
             }
         } catch (IOException e) {
-            //System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
@@ -366,24 +348,25 @@ public class Storage {
     private String encrypt(String strToEncrypt) {
         try
         {
-            /* Declare a byte array. */
+            // Declare a byte array
             byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             IvParameterSpec ivspec = new IvParameterSpec(iv);
-            /* Create factory for secret keys. */
+            // Create factory for secret keys
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            /* PBEKeySpec class implements KeySpec interface. */
+            //Create KeySpec and SecretKey using salt and password
             KeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), 65536, 256);
             SecretKey tmp = factory.generateSecret(spec);
             SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
+            //Create cipher with secretKey
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
-            /* Retruns encrypted value. */
+            // Return the encrypted string
             return Base64.getEncoder()
                     .encodeToString(cipher.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)));
         }
         catch (InvalidAlgorithmParameterException | InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e)
         {
-            //System.out.println("Error occured during encryption: " + e.toString());
+            System.out.println("Error occured during encryption: " + e.toString());
         }
         return null;
     }
@@ -395,9 +378,7 @@ public class Storage {
         try {
             File myObj = new File("decryptedVotes.txt");
             if (myObj.createNewFile()) {
-                //System.out.println("File created: " + myObj.getName());
             } else {
-                //System.out.println("Overwriting file");
                 myObj.delete();
                 myObj.createNewFile();
             }
@@ -411,10 +392,7 @@ public class Storage {
                     String line = reader.readLine();
 
                     while (line != null) {
-                        //System.out.println(line);
-                        //System.out.println(decryptString(line));
                         out.println(decryptString(line));
-                        // read next line
                         line = reader.readLine();
                     }
 
@@ -423,10 +401,8 @@ public class Storage {
                     e.printStackTrace();
                 }
             } catch (IOException e) {
-                //exception handling left as an exercise for the reader
             }
         } catch (IOException e) {
-            //System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
@@ -440,24 +416,24 @@ public class Storage {
     public String decryptString(String strToDecrypt) {
         try
         {
-            /* Declare a byte array. */
+            // Declare a byte array
             byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             IvParameterSpec ivspec = new IvParameterSpec(iv);
-            /* Create factory for secret keys. */
+            // Create factory for secret keys
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            /* PBEKeySpec class implements KeySpec interface. */
+            // Create KeySpec with the same salt and password we used for encryption
             KeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), 65536, 256);
             SecretKey tmp = factory.generateSecret(spec);
             SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(Cipher.DECRYPT_MODE, secretKey, ivspec);
-            /* Retruns decrypted value. */
+            //Return decrypted String
             return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
 
         }
         catch (InvalidAlgorithmParameterException | InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e)
         {
-            //System.out.println("Error occured during decryption: " + e.toString());
+            System.out.println("Error occured during decryption: " + e.toString());
         }
         return null;
     }
