@@ -98,6 +98,7 @@ public class Main extends Application {
             }
         }
         currentPrompt = 0;
+        voteAuthorizationCardScanner.insertOrRemoveCard();
     }
 
     public static void turnOnAndOffScreen(){

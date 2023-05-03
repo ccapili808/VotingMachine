@@ -57,8 +57,8 @@ public class Printer {
         voteAuthorizationCard = (Rectangle) printerJointObjects.getChildren().get(0);
         vBox = (VBox) printerJointObjects.getChildren().get(1);
 
-        printerRoot.getChildren().add(printSelectionButton);
-        printerRoot.getChildren().add(spoilButton);
+        //printerRoot.getChildren().add(printSelectionButton);
+        //printerRoot.getChildren().add(spoilButton);
     }
 
     /**
@@ -97,7 +97,7 @@ public class Printer {
      *his function can only be called after a user’s vote has already printed their vote on a physical voter card.
      * The function re-prints black ink across their voter card to conceal their voter card.
      */
-    private void spoilCard() {
+    public void spoilCard() {
         voteAuthorizationCard.setFill(Color.BLACK);
     }
 

@@ -98,7 +98,7 @@ public class VoteAuthorizationCardScanner {
 
     }
 
-    private void insertOrRemoveCard(){
+    public void insertOrRemoveCard(){
         if(!cardInserted){
             insertCard();
             scannerText.setText("Click to Remove Card");
@@ -123,12 +123,13 @@ public class VoteAuthorizationCardScanner {
         id = generateID();
         idText.setVisible(true);
         idText.setText(Long.toString(id));
+        Main.getTouchScreen().cardInserted();
     }
 
     /**
      * Activates the vote authorization card slot to return the voter card back to the user.
      */
-    private void removeCard() {
+    public void removeCard() {
         cardInserted = false;
         vBox.getChildren().clear();
         voteAuthorizationCard.setFill(Color.GREY);

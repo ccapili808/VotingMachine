@@ -149,24 +149,28 @@ public class TouchScreen {
     private VBox welcomePage(){
         VBox welcomePage = new VBox();
         welcomePage.setTranslateX(WINDOW_WIDTH / 2 - 100);
-        welcomePage.setTranslateY(WINDOW_HEIGHT - 400);
+        welcomePage.setTranslateY(WINDOW_HEIGHT - 550);
 
         Text greeting = new Text("    " + "Welcome!\n");
         Text ballotTitle = new Text(Main.getBallotTitle());
         Text date = new Text("\t\t\t" + Main.getBallotDate());
-        Text instructions = new Text("\n    " + Main.getBallotInstr());
+        Text instructions = new Text("\n    " + Main.getBallotInstr() + "\n");
+        Text card = new Text("Insert your Vote Authorization Card");
         instructions.setWrappingWidth(200);
+        card.setWrappingWidth(200);
 
         greeting.setFont(Font.font(36));
+        card.setFont(Font.font(24));
         ballotTitle.setFont(Font.font(24));
         date.setFont(Font.font(14));
         instructions.setFont(Font.font(20));
         greeting.setTextAlignment(TextAlignment.CENTER);
+        card.setTextAlignment(TextAlignment.CENTER);
         ballotTitle.setTextAlignment(TextAlignment.CENTER);
         date.setTextAlignment(TextAlignment.CENTER);
         instructions.setTextAlignment(TextAlignment.CENTER);
 
-        welcomePage.getChildren().addAll(greeting, ballotTitle, date, instructions);
+        welcomePage.getChildren().addAll(greeting, ballotTitle, date, instructions, card);
 
         return welcomePage;
     }
@@ -191,7 +195,7 @@ public class TouchScreen {
 
         GridPane grid = new GridPane();
         grid.setHgap(70);
-        for(int i = 1; i < pages.length-2; i++){
+        for(int i = 1; i < pages.length-3; i++){
             System.out.print(Main.getPrompt(i).getItemName() + " --> ");
             System.out.println(Main.getPrompt(i).getSelection());
 
@@ -283,6 +287,14 @@ public class TouchScreen {
             }
         });
 
+        quitBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                pages[currentPage].setVisible(false);
+                nextPage();
+            }
+        });
+
         quitBtn.setPrefWidth(100);
         castBtn.setPrefWidth(100);
 
@@ -295,6 +307,48 @@ public class TouchScreen {
         castPage.setTranslateY(WINDOW_HEIGHT - 400);
 
         return castPage;
+    }
+
+    private VBox spoilPage(){
+        VBox spoilPage = new VBox();
+
+        Main.getPrinter().spoilCard();
+
+        spoilPage.setSpacing(20);
+
+        Text title = new Text("\t\t Spoil Ballot");
+        Text prompt = new Text("""
+                Please ask for help from a poll worker.
+                """);
+        prompt.setWrappingWidth(300);
+
+        title.setFont(Font.font(20));
+        prompt.setFont(Font.font(16));
+        title.setTextAlignment(TextAlignment.CENTER);
+        prompt.setTextAlignment(TextAlignment.CENTER);
+
+        TextField adminPrompt = new TextField();
+        Button submit = new Button("Submit");
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (adminPrompt.getText().equals("123456789")) {
+                    System.out.println("Spoiled Ballot");
+                    pages[currentPage].setVisible(false);
+                    currentPage = -1;
+                    Main.clearSetUpInfo();
+                    nextPage();
+                    resetRoot();
+                }
+            }
+        });
+
+        spoilPage.getChildren().addAll(title, prompt, adminPrompt,submit);
+
+        spoilPage.setTranslateX(WINDOW_WIDTH / 2 - 150);
+        spoilPage.setTranslateY(WINDOW_HEIGHT - 400);
+
+        return spoilPage;
     }
 
 
@@ -378,8 +432,14 @@ public class TouchScreen {
         return hbox;
     }
 
+    public void cardInserted() {
+        if (currentPage == 0) {
+            nextPage();
+        }
+    }
+
     private void nextPage() {
-        if(currentPage < pages.length - 3){
+        if(currentPage < pages.length - 4){
             if (currentPage != -1) {
                 pages[currentPage].setVisible(false);
             }
@@ -387,7 +447,7 @@ public class TouchScreen {
             nextBtn.setVisible(true);
             backBtn.setVisible(true);
             pages[currentPage].setVisible(true);
-        }else if (currentPage == pages.length - 3){
+        }else if (currentPage == pages.length - 4){
             pages[currentPage].setVisible(false);
             currentPage++;
 
@@ -396,11 +456,19 @@ public class TouchScreen {
             nextBtn.setVisible(false);
             backBtn.setVisible(false);
             pages[currentPage].setVisible(true);
-        }else if (currentPage == pages.length - 2){
+        }else if (currentPage == pages.length - 3){
             pages[currentPage].setVisible(false);
             currentPage++;
 
             pages[currentPage] = castPage();  // Add to pages
+            root.getChildren().add(pages[currentPage]);
+
+            pages[currentPage].setVisible(true);
+        }else if (currentPage == pages.length - 2){
+            pages[currentPage].setVisible(false);
+            currentPage++;
+
+            pages[currentPage] = spoilPage();  // Add to pages
             root.getChildren().add(pages[currentPage]);
 
             pages[currentPage].setVisible(true);
@@ -548,6 +616,9 @@ public class TouchScreen {
         backBtn.setOnAction(e -> previousPage());
 
         root.getChildren().addAll(nextBtn, backBtn);
+
+        nextBtn.setVisible(false);
+        backBtn.setVisible(false);
     }
 
     private void addVirtualKeyboardToRoot() {
@@ -655,8 +726,8 @@ public class TouchScreen {
 
         // Move everything to Global 'Pages' Array, since everything
         // is hard coded w/ it atm :)
-        pages = new VBox[pagesTemp.size() + 2];  // Adds PrintPage & CastPage
-        for(int i = 0; i < pages.length-2; i++){
+        pages = new VBox[pagesTemp.size() + 3];  // Adds PrintPage & CastPage
+        for(int i = 0; i < pages.length-3; i++){
             pages[i] = pagesTemp.get(i);
         }
 
