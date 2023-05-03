@@ -4,10 +4,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 public class VirtualKeypad extends VBox {
 
     private TextField textField;
+    private String orignalText;
+    private Text textToUpdate;
 
     public VirtualKeypad() {
         textField = new TextField();
@@ -70,6 +73,7 @@ public class VirtualKeypad extends VBox {
 
     private void enterBtnPressed() {
         System.out.println(textField.getText());
+        textToUpdate.setText(orignalText + textField.getText());
     }
 
     private void setGUIAttr(){
@@ -80,8 +84,20 @@ public class VirtualKeypad extends VBox {
         this.setVisible(false);
     }
 
+    public void setTextFieldToUpdate(Text text){
+        textToUpdate = text;
+    }
+
+    public void setOriginalText(String s){
+        orignalText = s;
+    }
+
     public void showKeyboard(boolean visible){
         this.setVisible(visible);
+    }
+
+    public void clearTextField(){
+        textField.clear();
     }
 
     public void hideKeyboard(){

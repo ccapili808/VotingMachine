@@ -396,10 +396,27 @@ public class TouchScreen {
         }
 
         // 3. Write-in if contest
-        if (!proposition) {
+        if (!proposition) { //TODO: This only stores the vote if the button is clicked again after a write in is stored
             HBox writeIn = new HBox();
-            String writeInString = Translator.translateLanguage("Write-in Field...", masterLanguage);
-            writeIn = setGUIFormat(writeIn, writeInString);
+            String writeInString = Translator.translateLanguage("Write-in Field: ", masterLanguage);
+            RadioButton rb = new RadioButton();
+            writeIn.getChildren().add(rb);
+            Text text = new Text("\t" + writeInString);  // Create Text Obj
+            text.setId("answerChoice");
+            writeIn.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
+            writeIn.getChildren().add(text);
+            textList.add(text);
+            writeIn.setPadding(new Insets(10));
+
+            writeIn.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    keyboard.showKeyboard(true);
+                    keyboard.setOriginalText("\t" + writeInString);
+                    keyboard.setTextFieldToUpdate(text);
+                }
+            });
+
             choices[choices.length-1] = writeIn;
         }
 
@@ -419,7 +436,13 @@ public class TouchScreen {
     private HBox setGUIFormat(HBox hbox, String str) {
         RadioButton rb = new RadioButton();
         hbox.getChildren().add(rb);
-        hbox.setOnMousePressed(this::select);
+        hbox.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                keyboard.setVisible(false);
+            }
+        });
+        //hbox.setOnMousePressed(this::select);
         Text text = new Text("\t" + str);  // Create Text Obj
         text.setId("answerChoice");
         hbox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
@@ -438,6 +461,8 @@ public class TouchScreen {
     }
 
     private void nextPage() {
+        keyboard.setVisible(false);
+        keyboard.clearTextField();
         if(currentPage < pages.length - 4){
             if (currentPage != -1) {
                 pages[currentPage].setVisible(false);
@@ -482,6 +507,8 @@ public class TouchScreen {
         //you can use the VBox[] pages where each Vbox has an id of "page" + i
         //where i is the page number
         //you can use the method setVisible(boolean) to set the page to visible or invisible
+        keyboard.setVisible(false);
+        keyboard.clearTextField();
         if(currentPage > 1){
             pages[currentPage].setVisible(false);
             currentPage--;
@@ -653,7 +680,11 @@ public class TouchScreen {
                 Item currentItem = Main.getPrompt(currentPage);
                 System.out.println("Current prompt type: " + currentItem.getItemType());
                 if (choiceText.contains("Write-in")) {
-                    currentItem.setSelection(choiceText,true);
+                    choiceText = choiceText.substring(choiceText.indexOf(": ")+2);
+                    System.out.print(choiceText);
+                    if(!choiceText.equals("")){
+                        currentItem.setSelection(choiceText,true);
+                    }
                 }
                 else {
                     currentItem.setSelection(choiceText, false);
