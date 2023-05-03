@@ -144,4 +144,17 @@ public class Main extends Application {
     }
 
 
+    public static String getBallotTitle(){
+        return storage.getHeaderInfo().getTitle();
+    }
+
+    public static String getBallotDate(){
+        return storage.getHeaderInfo().getDate();
+    }
+
+    public static String getBallotInstr(){
+        return storage.getHeaderInfo().getInstruction();
+    }
+
+
 }

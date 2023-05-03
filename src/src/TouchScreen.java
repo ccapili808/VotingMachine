@@ -5,14 +5,13 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import java.util.*;
 
@@ -117,8 +116,146 @@ public class TouchScreen {
      */
     private void changeLanguage(String language) {
         masterLanguage = language;
-        System.out.println("New Master Language " + masterLanguage);
+
+        if (!Objects.equals(masterLanguage, "English")){
+            Item currentPrompt = Main.getPrompt(currentPage+1);
+            System.out.println("Changing Language on Page #" + currentPage);
+            String str = "";
+
+            for(Text text: textList){
+                System.out.print("\t" + text.getText() + " --> ");
+
+                if(!Objects.equals(currentPrompt.getItemType(), "Contest") || !Objects.equals(text.getId(), "answerChoice")){
+                    str = Translator.translateLanguage(text.getText(), masterLanguage);
+                }else{
+                    str = text.getText();
+                }
+
+                System.out.println(str);
+                text.setText(str);  // Update Text Label
+            }
+        }
     }
+
+    /**
+     * Simple Welcome Page. Does not allow Text Size changes.
+     * @return The Welcome Page as VBox
+     */
+    private VBox welcomePage(){
+        VBox welcomePage = new VBox();
+        welcomePage.setTranslateX(WINDOW_WIDTH / 2 - 100);
+        welcomePage.setTranslateY(WINDOW_HEIGHT - 400);
+
+        Text greeting = new Text("    " + "Welcome!\n");
+        Text ballotTitle = new Text(Main.getBallotTitle());
+        Text date = new Text("\t\t\t" + Main.getBallotDate());
+        Text instructions = new Text("\n    " + Main.getBallotInstr());
+        instructions.setWrappingWidth(200);
+
+        greeting.setFont(Font.font(36));
+        ballotTitle.setFont(Font.font(24));
+        date.setFont(Font.font(14));
+        instructions.setFont(Font.font(20));
+        greeting.setTextAlignment(TextAlignment.CENTER);
+        ballotTitle.setTextAlignment(TextAlignment.CENTER);
+        date.setTextAlignment(TextAlignment.CENTER);
+        instructions.setTextAlignment(TextAlignment.CENTER);
+
+        welcomePage.getChildren().addAll(greeting, ballotTitle, date, instructions);
+
+        return welcomePage;
+    }
+
+
+    private VBox printPage(){
+        VBox overviewPage = new VBox();
+        overviewPage.setSpacing(20);
+
+        Text title = new Text("\t\t\t Print Ballot");
+        Text prompt = new Text("""
+                You cannot change your vote selections after printing your ballot.
+
+                 To continue and print your ballot, touch 'Print'. To return to the ballot, touch 'Return to Ballot'.""");
+        prompt.setWrappingWidth(300);
+
+        title.setFont(Font.font(20));
+        prompt.setFont(Font.font(16));
+        title.setTextAlignment(TextAlignment.CENTER);
+        prompt.setTextAlignment(TextAlignment.CENTER);
+        overviewPage.getChildren().add(title);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(70);
+        for(int i = 1; i < pages.length-2; i++){
+            System.out.print(Main.getPrompt(i).getItemName() + " --> ");
+            System.out.println(Main.getPrompt(i).getSelection());
+
+            Item item = Main.getPrompt(i);
+
+            grid.add(new Text(item.getItemName()), 0, i-1);
+            try{
+                grid.add(new Text(item.getSelection()), 1, i-1);
+            }catch (Exception e){
+                grid.add(new Text("{EMPTY}"), 1, i-1);
+            }
+        }
+
+
+        HBox optBtns = new HBox();
+        optBtns.setSpacing(100);
+        Button returnBtn = new Button("Return to Ballot");  // TODO: This should set current page to 0 -> Call nextPage() -> enters page 1
+        Button printBtn = new Button("Print");  // TODO: This should be binded to nextPage() (nextPage already has logic for this)
+        returnBtn.setPrefWidth(100);
+        printBtn.setPrefWidth(100);
+
+        optBtns.getChildren().addAll(returnBtn, printBtn);
+        overviewPage.getChildren().addAll(grid, prompt, optBtns);
+
+        overviewPage.setTranslateX(WINDOW_WIDTH / 2 - 150);
+        overviewPage.setTranslateY(WINDOW_HEIGHT - 400);
+
+        return overviewPage;
+    }
+
+
+    private VBox castPage(){
+        VBox castPage = new VBox();
+
+        castPage.setSpacing(20);
+
+        Text title = new Text("\t\t\t Cast Ballot");
+        Text prompt = new Text("""
+                Review your ballot through the window
+                 to the right.
+                To cast your ballot as printed, touch 'Cast'.
+                
+                To quit voting and request a new ballot, touch 'Quit'. Your ballot will not be cast.""");
+        prompt.setWrappingWidth(300);
+
+        title.setFont(Font.font(20));
+        prompt.setFont(Font.font(16));
+        title.setTextAlignment(TextAlignment.CENTER);
+        prompt.setTextAlignment(TextAlignment.CENTER);
+
+
+        HBox optBtns = new HBox();
+        optBtns.setSpacing(100);
+        Button quitBtn = new Button("Quit");  // TODO: This should throw some sort of "Voided Ballot" page
+        Button castBtn = new Button("Cast");  // TODO: This should print to Authorization Card.
+        quitBtn.setPrefWidth(100);
+        castBtn.setPrefWidth(100);
+
+        optBtns.getChildren().addAll(quitBtn, castBtn);
+
+
+        castPage.getChildren().addAll(title, prompt, optBtns);
+
+        castPage.setTranslateX(WINDOW_WIDTH / 2 - 150);
+        castPage.setTranslateY(WINDOW_HEIGHT - 400);
+
+        return castPage;
+    }
+
 
     /**
      * TODO: Give this function args (promptString, choices[], etc.) from
@@ -138,9 +275,7 @@ public class TouchScreen {
         promptString = Translator.translateLanguage(promptString, masterLanguage);
         Text prompt = new Text(promptString);
         prompt.setWrappingWidth(200);
-//        Label promptLabel = new Label(promptString);
-//        promptLabel.setWrapText(true);
-//        promptLabel.setPrefWidth(200);
+        prompt.setId("prompt");
         promptBox.getChildren().add(prompt);  // Fluff
         promptBox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
         promptBox.setPadding(new Insets(10));
@@ -185,6 +320,7 @@ public class TouchScreen {
         hbox.getChildren().add(rb);
         hbox.setOnMousePressed(this::select);
         Text text = new Text("\t" + str);  // Create Text Obj
+        text.setId("answerChoice");
         hbox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,null,null)));
         hbox.getChildren().add(text);
         textList.add(text);
@@ -195,15 +331,28 @@ public class TouchScreen {
     }
 
     private void nextPage() {
-        if(currentPage < pages.length - 1){
+        if(currentPage < pages.length - 3){
             pages[currentPage].setVisible(false);
             currentPage++;
             pages[currentPage].setVisible(true);
-        }else{
+        }else if (currentPage == pages.length - 3){
             pages[currentPage].setVisible(false);
-            currentPage = 0;
+            currentPage++;
+
+            pages[currentPage] = printPage();  // Add to pages
+            root.getChildren().add(pages[currentPage]);
+
+            pages[currentPage].setVisible(true);
+        }else if (currentPage == pages.length - 2){
+            pages[currentPage].setVisible(false);
+            currentPage++;
+
+            pages[currentPage] = castPage();  // Add to pages
+            root.getChildren().add(pages[currentPage]);
+
             pages[currentPage].setVisible(true);
         }
+        changeLanguage(masterLanguage);
         updateSelections();
     }
 
@@ -213,15 +362,16 @@ public class TouchScreen {
         //you can use the VBox[] pages where each Vbox has an id of "page" + i
         //where i is the page number
         //you can use the method setVisible(boolean) to set the page to visible or invisible
-        if(currentPage > 0){
+        if(currentPage > 1){
             pages[currentPage].setVisible(false);
             currentPage--;
             pages[currentPage].setVisible(true);
         }else{
-            pages[currentPage].setVisible(false);
-            currentPage = pages.length - 1;
-            pages[currentPage].setVisible(true);
+//            pages[currentPage].setVisible(false);
+//            currentPage = pages.length - 1;
+//            pages[currentPage].setVisible(true);
         }
+        changeLanguage(masterLanguage);
         updateSelections();
     }
 
@@ -258,7 +408,7 @@ public class TouchScreen {
         //fill root with layout
         setAccessibilityLayout();
         // TEST: Give questions
-        setPages(3);
+        setPages();
         addNextBackBtns();
         addVirtualKeyboardToRoot();
         Button hideOrShowKeyboard = hideOrShowKeyboard(keyboard);
@@ -347,16 +497,6 @@ public class TouchScreen {
         root.getChildren().addAll(nextBtn, backBtn);
     }
 
-    private Button createButtonWithImage(String pathToImage) {
-        Image image = new Image(pathToImage);
-        ImageView imageView = new ImageView(image);
-        imageView.setFitHeight(50);
-        imageView.setFitWidth(50);
-        Button buttonWithImage = new Button();
-        buttonWithImage.setGraphic(imageView);
-        return buttonWithImage;
-    }
-
     private void addVirtualKeyboardToRoot() {
         root.getChildren().add(keyboard);
     }
@@ -383,7 +523,8 @@ public class TouchScreen {
                 else {
                     choiceText = choiceText.substring(1, choiceText.length());
                 }
-                Item currentItem = Main.getPrompt(currentPage+1);
+                Item currentItem = Main.getPrompt(currentPage);
+                System.out.println("Current prompt type: " + currentItem.getItemType());
                 if (choiceText.contains("Write-in")) {
                     currentItem.setSelection(choiceText,true);
                 }
@@ -422,9 +563,10 @@ public class TouchScreen {
 
 
     //USED FOR STORING VOTES AND PAGES
-    public void setPages(int numPages) {
+    public void setPages() {
         List<VBox> pagesTemp = new ArrayList<>();  // Arbitrary # of pages.
-       // Main main = new Main();
+
+        pagesTemp.add(welcomePage());  // Insert welcome Page
         Item prompts = Main.getNextPrompt();
         do {
             String question = prompts.getItemName();  // President, Governor, Proposition, etc.
@@ -460,14 +602,16 @@ public class TouchScreen {
 
         // Move everything to Global 'Pages' Array, since everything
         // is hard coded w/ it atm :)
-        pages = new VBox[pagesTemp.size()];
-        for(int i = 0; i < pages.length; i++){
+        pages = new VBox[pagesTemp.size() + 2];  // Adds PrintPage & CastPage
+        for(int i = 0; i < pages.length-2; i++){
             pages[i] = pagesTemp.get(i);
         }
 
         // Send pages to root
         for(VBox page : pages){
-            root.getChildren().add(page);
+            if(page != null){
+                root.getChildren().add(page);
+            }
         }
     }
 }

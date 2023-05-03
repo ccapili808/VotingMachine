@@ -15,7 +15,7 @@ public class Translator {
      */
     public static void main(String[] args) throws Exception {
         // TODO: Specify your translation requirements here:
-        translateEnglishToSpanish("Hello");
+        translateEnglishToSpanish("Hello World");
     }
 
     /**
@@ -77,22 +77,23 @@ public class Translator {
     }
 
     public static String translateLanguage(String text, String language) {
-        switch (language) {
-            case "Spanish":
-                try {
-                    return translateEnglishToSpanish(text);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            case "Mandarin":
-                try {
-                    return translateEnglishToMandarin(text);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            default:
-                return text;
-        }
+        return text;
+//        switch (language) {
+//            case "Spanish":
+//                try {
+//                    return translateEnglishToSpanish(text);
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
+//            case "Mandarin":
+//                try {
+//                    return translateEnglishToMandarin(text);
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
+//            default:
+//                return text;
+//        }
     }
 
 }
