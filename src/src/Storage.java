@@ -86,6 +86,7 @@ public class Storage {
         }
         //call countVote() to add to the vote totals
         countVote();
+        decrypt();
 
     }
 
@@ -229,8 +230,8 @@ public class Storage {
                     itemVotes = new HashMap<>();
                     itemName = line.split(":")[0];
                 }
-                else if (line.contains(" ")) {
-                    String[] itemLine = line.split(" ");
+                else if (line.contains("=")) {
+                    String[] itemLine = line.split("=");
                     itemVotes.put(itemLine[0], Integer.parseInt(itemLine[1]));
                 }
                 else if (line.isBlank()) {
@@ -292,7 +293,7 @@ public class Storage {
                     out.println(encrypt(itemName+":"));
                     for (String option: voteTotals.get(itemName).keySet()
                          ) {
-                        out.println(encrypt(option + " " + voteTotals.get(itemName).get(option)));
+                        out.println(encrypt(option + "=" + voteTotals.get(itemName).get(option)));
                     }
                     out.println();
                 }

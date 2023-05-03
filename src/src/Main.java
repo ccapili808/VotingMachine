@@ -97,6 +97,7 @@ public class Main extends Application {
                 item.resetSelections();
             }
         }
+        currentPrompt = 0;
     }
 
     public static void turnOnAndOffScreen(){
@@ -154,6 +155,18 @@ public class Main extends Application {
 
     public static String getBallotInstr(){
         return storage.getHeaderInfo().getInstruction();
+    }
+
+    public static Storage getStorage() {
+        return storage;
+    }
+
+    public static Printer getPrinter() {
+        return printer;
+    }
+
+    public static TouchScreen getTouchScreen() {
+        return touchScreen;
     }
 
 

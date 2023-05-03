@@ -1,3 +1,5 @@
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
@@ -28,6 +30,9 @@ public class TouchScreen {
     Rectangle background;
     private List<Text> textList = new ArrayList<>();
     private boolean isScreenOn = true;
+
+    private Button nextBtn;
+    private Button backBtn;
 
     //This is where we will temporarily store prompts and options passed in
     List<String> prompts;
@@ -203,8 +208,30 @@ public class TouchScreen {
 
         HBox optBtns = new HBox();
         optBtns.setSpacing(100);
-        Button returnBtn = new Button("Return to Ballot");  // TODO: This should set current page to 0 -> Call nextPage() -> enters page 1
-        Button printBtn = new Button("Print");  // TODO: This should be binded to nextPage() (nextPage already has logic for this)
+        Button returnBtn = new Button("Return to Ballot");
+
+        //add return button functionality
+        returnBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                currentPage = 0;
+                nextPage();
+                overviewPage.setVisible(false);
+            }
+        });
+
+
+        Button printBtn = new Button("Print");
+
+        //add print button functionality
+        printBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                pages[currentPage].setVisible(false);
+                nextPage();
+                printBallot();
+            }
+        });
         returnBtn.setPrefWidth(100);
         printBtn.setPrefWidth(100);
 
@@ -241,7 +268,21 @@ public class TouchScreen {
         HBox optBtns = new HBox();
         optBtns.setSpacing(100);
         Button quitBtn = new Button("Quit");  // TODO: This should throw some sort of "Voided Ballot" page
-        Button castBtn = new Button("Cast");  // TODO: This should print to Authorization Card.
+        Button castBtn = new Button("Cast");
+
+        //add cast button functionality
+        castBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                castVotes();
+                pages[currentPage].setVisible(false);
+                currentPage = -1;
+                Main.clearSetUpInfo();
+                nextPage();
+                resetRoot();
+            }
+        });
+
         quitBtn.setPrefWidth(100);
         castBtn.setPrefWidth(100);
 
@@ -339,8 +380,12 @@ public class TouchScreen {
 
     private void nextPage() {
         if(currentPage < pages.length - 3){
-            pages[currentPage].setVisible(false);
+            if (currentPage != -1) {
+                pages[currentPage].setVisible(false);
+            }
             currentPage++;
+            nextBtn.setVisible(true);
+            backBtn.setVisible(true);
             pages[currentPage].setVisible(true);
         }else if (currentPage == pages.length - 3){
             pages[currentPage].setVisible(false);
@@ -348,7 +393,8 @@ public class TouchScreen {
 
             pages[currentPage] = printPage();  // Add to pages
             root.getChildren().add(pages[currentPage]);
-
+            nextBtn.setVisible(false);
+            backBtn.setVisible(false);
             pages[currentPage].setVisible(true);
         }else if (currentPage == pages.length - 2){
             pages[currentPage].setVisible(false);
@@ -398,11 +444,11 @@ public class TouchScreen {
     }
 
     private void printBallot() {
-
+        Main.getPrinter().printVoteSelection();
     }
 
-    private void castBallot() {
-
+    private void castVotes() {
+        Main.getStorage().saveVote();
     }
 
     /*
@@ -491,12 +537,12 @@ public class TouchScreen {
     }
 
     private void addNextBackBtns(){
-        Button nextBtn = new Button(Translator.translateLanguage("Next", masterLanguage));
+        nextBtn = new Button(Translator.translateLanguage("Next", masterLanguage));
         nextBtn.setTranslateX(nextBtn.getTranslateX() + 580);
         nextBtn.setTranslateY(nextBtn.getTranslateY() + 300);
         nextBtn.setOnAction(e -> nextPage());
 
-        Button backBtn = new Button(Translator.translateLanguage("Back", masterLanguage));
+        backBtn = new Button(Translator.translateLanguage("Back", masterLanguage));
         backBtn.setTranslateX(backBtn.getTranslateX() + 150);
         backBtn.setTranslateY(backBtn.getTranslateY() + 300);
         backBtn.setOnAction(e -> previousPage());

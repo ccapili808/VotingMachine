@@ -66,7 +66,7 @@ public class Printer {
      * This function reads user’s votes from temp storage and prints their selection onto the voter card.
      */
     //TODO: Fix printer so that it can handle more items
-    private void printVoteSelection() {
+    public void printVoteSelection() {
         List<Section> ballot = Main.getBallot();
 
         for(Section s: ballot ){
