@@ -98,7 +98,7 @@ public class Main extends Application {
             }
         }
         currentPrompt = 0;
-        voteAuthorizationCardScanner.insertOrRemoveCard();
+        voteAuthorizationCardScanner.removeCard();
     }
 
     public static void turnOnAndOffScreen(){
@@ -168,6 +168,10 @@ public class Main extends Application {
 
     public static TouchScreen getTouchScreen() {
         return touchScreen;
+    }
+
+    public static VoteAuthorizationCardScanner getVoteAuthorizationCardScanner(){
+        return voteAuthorizationCardScanner;
     }
 
 

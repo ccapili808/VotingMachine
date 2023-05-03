@@ -1,3 +1,4 @@
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -64,7 +65,9 @@ public class Battery {
                     if (System.currentTimeMillis() - startTime > 2 * 1000) {
                         manualShutDown();
                     } else {
-                        Main.turnOnAndOffScreen();
+                        if(hasPower){
+                            Main.turnOnAndOffScreen();
+                        }
                     }
                 }
             }
@@ -112,6 +115,10 @@ public class Battery {
      */
     private void changePwrSource() {
         if(powerSource.equals("outlet")){
+            if(batteryPercentage <= 0){
+                manualShutDown();
+                hasPower = false;
+            }
             powerSource = "battery";
             voltage = 0;
             connectButton.setText("Connect Outlet");
@@ -168,7 +175,12 @@ public class Battery {
                         if(batteryPercentage > 0){
                             batteryPercentage -= DISCHARGERATE;
                         } else{
-                            //TODO: ShutDown screen when power is loss
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    manualShutDown();
+                                }
+                            });
                             hasPower = false;
                         }
                         updateBatteryImageAndExternalLED();

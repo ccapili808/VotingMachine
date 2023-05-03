@@ -66,7 +66,7 @@ public class VoteAuthorizationCardScanner {
         scannerText.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                insertOrRemoveCard();
+                insertCard();
             }
         });
 
@@ -77,7 +77,7 @@ public class VoteAuthorizationCardScanner {
         scanner.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                insertOrRemoveCard();
+                insertCard();
             }
         });
 
@@ -98,16 +98,6 @@ public class VoteAuthorizationCardScanner {
 
     }
 
-    public void insertOrRemoveCard(){
-        if(!cardInserted){
-            insertCard();
-            scannerText.setText("Click to Remove Card");
-        }else if(cardInserted && staffOverride){
-            removeCard();
-            scannerText.setText("Click to Insert Card");
-        }
-    }
-
     public Group getPrinterJointObjects(){
         return printerJointObjects;
     }
@@ -118,29 +108,33 @@ public class VoteAuthorizationCardScanner {
      * Once a card is detected, it holds the card in a fixed position in the display.
      */
     private void insertCard(){
-        cardInserted = true;
-        voteAuthorizationCard.setFill(Color.WHITE);
-        id = generateID();
-        idText.setVisible(true);
-        idText.setText(Long.toString(id));
-        Main.getTouchScreen().cardInserted();
+        if(!cardInserted){
+            scannerText.setVisible(false);
+            cardInserted = true;
+            voteAuthorizationCard.setFill(Color.WHITE);
+            id = generateID();
+            idText.setVisible(true);
+            idText.setText(Long.toString(id));
+            Main.getTouchScreen().cardInserted();
+        }
     }
 
     /**
      * Activates the vote authorization card slot to return the voter card back to the user.
      */
     public void removeCard() {
+        scannerText.setVisible(true);
+        scannerText.setText("Click to Insert Card");
         cardInserted = false;
         vBox.getChildren().clear();
         voteAuthorizationCard.setFill(Color.GREY);
         idText.setVisible(false);
-        storeCard(); //TODO: Storing card will be done in main
     }
 
     /**
      * Activates the vote authorization card slot to store the finalized voter card in the DRE system.
      */
-    private void storeCard(){
+    public void storeCard(){
         Robot robot = new Robot();
         WritableImage image = new WritableImage((int) (PANEL_WIDTH -10), (int) (PANEL_HEIGHT -80));
         final Point2D windowCoord = new Point2D(scene.getWindow().getX(), scene.getWindow().getY());

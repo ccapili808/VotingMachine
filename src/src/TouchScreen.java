@@ -517,6 +517,7 @@ public class TouchScreen {
 
     private void castVotes() {
         Main.getStorage().saveVote();
+        Main.getVoteAuthorizationCardScanner().storeCard();
     }
 
     /*
