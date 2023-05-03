@@ -101,10 +101,6 @@ public class Main extends Application {
         voteAuthorizationCardScanner.removeCard();
     }
 
-    public static void turnOnAndOffScreen(){
-        touchScreen.turnOnAndOffScreen();
-    }
-
     public static boolean isAuthorizationCardInserted(){
         return voteAuthorizationCardScanner.isCardInserted();
     }

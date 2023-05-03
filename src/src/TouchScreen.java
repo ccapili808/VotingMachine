@@ -18,8 +18,8 @@ import javafx.scene.text.TextAlignment;
 import java.util.*;
 
 public class TouchScreen {
-    private final double SCENE_WIDTH = 1300;
-    private final double SCENE_HEIGHT = 600;
+    private final double SCENE_WIDTH = 1400;
+    private final double SCENE_HEIGHT = 800;
     private final double WINDOW_WIDTH = 800;
     private final double WINDOW_HEIGHT = 600;
     private static int brightnessLevel;
@@ -54,11 +54,10 @@ public class TouchScreen {
         colorAdjust.setBrightness(0.0);
         //masterLanguage = "English";
         textSizeLevel = 12;
-        background = new Rectangle(WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
-        background.setStroke(Color.BLACK);
         this.root = new Group();
         this.mainRoot = new Group();
-        this.root.getChildren().add(background);
+        mainRoot.setTranslateX(50);
+        mainRoot.setTranslateY(100);
         setScene();
 
     }
@@ -527,6 +526,9 @@ public class TouchScreen {
      */
 
     private void setScene() {
+        background = new Rectangle(WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
+        background.setStroke(Color.BLACK);
+        root.getChildren().add(background);
         //fill root with layout
         setAccessibilityLayout();
         // TEST: Give questions
@@ -684,6 +686,10 @@ public class TouchScreen {
             background.setFill(Color.WHITE);
             isScreenOn = true;
         }
+    }
+
+    public boolean getIsScreenOn(){
+        return isScreenOn;
     }
 
 

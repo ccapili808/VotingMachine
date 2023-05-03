@@ -64,9 +64,15 @@ public class Battery {
                 } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
                     if (System.currentTimeMillis() - startTime > 2 * 1000) {
                         manualShutDown();
+                        batteryImage.setVisible(false);
                     } else {
                         if(hasPower){
-                            Main.turnOnAndOffScreen();
+                            Main.getTouchScreen().turnOnAndOffScreen();
+                            if(Main.getTouchScreen().getIsScreenOn()){
+                                batteryImage.setVisible(true);
+                            }else{
+                                batteryImage.setVisible(false);
+                            }
                         }
                     }
                 }
@@ -80,14 +86,14 @@ public class Battery {
         }
         batteryImage.setFitHeight(50);
         batteryImage.setPreserveRatio(true);
-        batteryImage.setX(xOffset+50);
-        batteryImage.setY(yOffset+100);
+        batteryImage.setX(750);
+        batteryImage.setY(25);
 
         externalLED = new Circle(25);
         externalLED.setStroke(Color.BLACK);
         externalLED.setFill(Color.BLACK);
-        externalLED.setCenterX(xOffset+ 60);
-        externalLED.setCenterY(yOffset + 300);
+        externalLED.setCenterX(50);
+        externalLED.setCenterY(-50);
 
         batteryRoot.getChildren().add(externalLED);
         batteryRoot.getChildren().add(batteryImage);
@@ -196,7 +202,8 @@ public class Battery {
      * Clears setup info and turns off screen
      */
     private void manualShutDown(){
-        Main.turnOnAndOffScreen();
+        batteryImage.setVisible(false);
+        Main.getTouchScreen().turnOnAndOffScreen();
         Main.clearSetUpInfo();
         System.out.println("SHUT DOWN");
     }

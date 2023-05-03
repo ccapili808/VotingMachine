@@ -77,6 +77,7 @@ public class VirtualKeypad extends VBox {
         this.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
         this.setTranslateX(this.getTranslateX() + 200);
         this.setTranslateY(this.getTranslateY() + 500);
+        this.setVisible(false);
     }
 
     public void showKeyboard(boolean visible){
