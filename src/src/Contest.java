@@ -71,7 +71,7 @@ public class Contest extends Item{
         for (String candidate: selections.keySet()) {
             if (selections.get(candidate)) {
                 if (candidate.equals("writeIn")) {
-                    return ("writeIn:" + writeInString);
+                    return ("writeIn-" + writeInString);
                 }
                 else return candidate;
             }
