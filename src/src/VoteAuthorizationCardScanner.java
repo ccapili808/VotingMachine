@@ -141,9 +141,9 @@ public class VoteAuthorizationCardScanner {
         final Point2D sceneCoord = new Point2D(scene.getX(), scene.getY());
 
         image = robot.getScreenCapture(image,
-                windowCoord.getX() + sceneCoord.getX() + xOffset + 5,
-                windowCoord.getY() + sceneCoord.getY() + 5,
-                PANEL_WIDTH -10, PANEL_HEIGHT -80);
+                windowCoord.getX() + sceneCoord.getX() + xOffset + 5 + 50,
+                windowCoord.getY() + sceneCoord.getY() + 5 + 100,
+                PANEL_WIDTH - 10, PANEL_HEIGHT - 80);
 
         try {
             File file = new File("./Resources/VoteAuthorizationCards/" + id + ".png");
