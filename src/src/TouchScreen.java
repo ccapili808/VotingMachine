@@ -48,6 +48,7 @@ public class TouchScreen {
 
     private Group root;
     private Scene scene;
+    private TranslatorV2 translator = new TranslatorV2();
     public TouchScreen() {
         // Default levels
         this.colorAdjust = new ColorAdjust();
@@ -130,7 +131,7 @@ public class TouchScreen {
                 System.out.print("\t" + text.getText() + " --> ");
 
                 if(!Objects.equals(currentPrompt.getItemType(), "Contest") || !Objects.equals(text.getId(), "answerChoice")){
-                    str = Translator.translateLanguage(text.getText(), masterLanguage);
+                    str = TranslatorV2.translateLanguage(text.getText(), masterLanguage);
                 }else{
                     str = text.getText();
                 }
@@ -366,7 +367,7 @@ public class TouchScreen {
         // 1. Prompt
         HBox promptBox = new HBox();
         //Add prompts here:
-        promptString = Translator.translateLanguage(promptString, masterLanguage);
+        promptString = TranslatorV2.translateLanguage(promptString, masterLanguage);
         Text prompt = new Text(promptString);
         prompt.setWrappingWidth(200);
         prompt.setId("prompt");
@@ -376,7 +377,7 @@ public class TouchScreen {
         textList.add(prompt);
         HBox[] choices;
         // 2. Choices
-        // TODO: Figure out why translator won't translate?!  乁( ⁰͡ Ĺ̯ ⁰͡ ) ㄏ
+        // TODO: Figure out why TranslatorV2 won't translate?!  乁( ⁰͡ Ĺ̯ ⁰͡ ) ㄏ
         if (proposition) {
             choices = new HBox[numOpts];
         }
@@ -386,7 +387,7 @@ public class TouchScreen {
         String answerString = "";
         for(int i = 0; i < numOpts; i++){
             if(proposition){  // Only Translate Propositions (Yes & No)
-                answerString = Translator.translateLanguage(choiceList[i], masterLanguage);
+                answerString = TranslatorV2.translateLanguage(choiceList[i], masterLanguage);
             }else{
                 answerString = choiceList[i];
             }
@@ -398,7 +399,7 @@ public class TouchScreen {
         // 3. Write-in if contest
         if (!proposition) { //TODO: This only stores the vote if the button is clicked again after a write in is stored
             HBox writeIn = new HBox();
-            String writeInString = Translator.translateLanguage("Write-in Field: ", masterLanguage);
+            String writeInString = TranslatorV2.translateLanguage("Write-in Field: ", masterLanguage);
             RadioButton rb = new RadioButton();
             writeIn.getChildren().add(rb);
             Text text = new Text("\t" + writeInString);  // Create Text Obj
@@ -584,9 +585,9 @@ public class TouchScreen {
     }
 
     private void setAccessibilityLayout() {
-        Menu menu = new Menu(Translator.translateLanguage("Accessibility", masterLanguage));
-        Menu audioMenu = new Menu(Translator.translateLanguage("Audio", masterLanguage));
-        String volume = Translator.translateLanguage("Volume", masterLanguage);
+        Menu menu = new Menu(TranslatorV2.translateLanguage("Accessibility", masterLanguage));
+        Menu audioMenu = new Menu(TranslatorV2.translateLanguage("Audio", masterLanguage));
+        String volume = TranslatorV2.translateLanguage("Volume", masterLanguage);
         MenuItem volumeInc = new MenuItem(volume + " +1");
         MenuItem volumeDec = new MenuItem(volume + " -1");
         volumeInc.setOnAction(e -> Audio.increaseVolume());
@@ -594,7 +595,7 @@ public class TouchScreen {
         audioMenu.getItems().add(volumeInc);
         audioMenu.getItems().add(volumeDec);
 
-        String textSize = Translator.translateLanguage("Text Size", masterLanguage);
+        String textSize = TranslatorV2.translateLanguage("Text Size", masterLanguage);
         Menu textSizeMenu = new Menu(textSize);
         MenuItem textSizeInc = new MenuItem(textSize + " +1");
         MenuItem textSizeDec = new MenuItem(textSize + " -1");
@@ -603,7 +604,7 @@ public class TouchScreen {
         textSizeMenu.getItems().add(textSizeInc);
         textSizeMenu.getItems().add(textSizeDec);
 
-        String brightness = Translator.translateLanguage("Brightness", masterLanguage);
+        String brightness = TranslatorV2.translateLanguage("Brightness", masterLanguage);
         Menu brightnessMenu = new Menu(brightness);
         MenuItem brightnessInc = new MenuItem(brightness + " +1");
         MenuItem brightnessDec = new MenuItem(brightness + " -1");
@@ -613,7 +614,7 @@ public class TouchScreen {
         brightnessMenu.getItems().add(brightnessDec);
 
 
-        Menu languageMenu = new Menu(Translator.translateLanguage("Language", masterLanguage));
+        Menu languageMenu = new Menu(TranslatorV2.translateLanguage("Language", masterLanguage));
         MenuItem english = new MenuItem("English");
         MenuItem spanish = new MenuItem("Spanish");
         MenuItem mandarin = new MenuItem("Mandarin");
@@ -636,12 +637,12 @@ public class TouchScreen {
     }
 
     private void addNextBackBtns(){
-        nextBtn = new Button(Translator.translateLanguage("Next", masterLanguage));
+        nextBtn = new Button(TranslatorV2.translateLanguage("Next", masterLanguage));
         nextBtn.setTranslateX(nextBtn.getTranslateX() + 580);
         nextBtn.setTranslateY(nextBtn.getTranslateY() + 300);
         nextBtn.setOnAction(e -> nextPage());
 
-        backBtn = new Button(Translator.translateLanguage("Back", masterLanguage));
+        backBtn = new Button(TranslatorV2.translateLanguage("Back", masterLanguage));
         backBtn.setTranslateX(backBtn.getTranslateX() + 150);
         backBtn.setTranslateY(backBtn.getTranslateY() + 300);
         backBtn.setOnAction(e -> previousPage());

@@ -1,14 +1,12 @@
+import java.util.HashMap;
 import java.util.Map;
 
 public class TranslatorV2 {
-    private Map<String, String> mandarinDictionary;
-    private Map<String, String> spanishDictionary;
+    private final static Map<String, String>  mandarinDictionary = new HashMap<>();
+    private final static Map<String, String> spanishDictionary = new HashMap<>();
     TranslatorV2() {
         initMandarinDictionary();
         initSpanishDictionary();
-    }
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
     }
 
     private void initMandarinDictionary() {
@@ -90,7 +88,7 @@ public class TranslatorV2 {
         spanishDictionary.put("(Republican)", "(Republicano)");
     }
 
-    public String translateLanguage(String text, String language) {
+    public static String translateLanguage(String text, String language) {
         return switch (language) {
             case "Spanish" ->
                 //search for text in spanish dictionary, if it's not there just return the text
