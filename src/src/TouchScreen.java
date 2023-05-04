@@ -411,9 +411,10 @@ public class TouchScreen {
             writeIn.setOnMousePressed(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
+                    Item currentItem = Main.getPrompt(currentPage);
                     keyboard.showKeyboard(true);
                     keyboard.setOriginalText("\t" + writeInString);
-                    keyboard.setTextFieldToUpdate(text);
+                    keyboard.setTextFieldToUpdate(text, currentItem);
                 }
             });
 
