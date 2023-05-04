@@ -11,6 +11,7 @@ public class VirtualKeypad extends VBox {
     private TextField textField;
     private String orignalText;
     private Text textToUpdate;
+    private Item itemToUpdate;
 
     public VirtualKeypad() {
         textField = new TextField();
@@ -74,6 +75,7 @@ public class VirtualKeypad extends VBox {
     private void enterBtnPressed() {
         System.out.println(textField.getText());
         textToUpdate.setText(orignalText + textField.getText());
+        itemToUpdate.setSelection(textField.getText(), true);
     }
 
     private void setGUIAttr(){
@@ -84,8 +86,9 @@ public class VirtualKeypad extends VBox {
         this.setVisible(false);
     }
 
-    public void setTextFieldToUpdate(Text text){
+    public void setTextFieldToUpdate(Text text, Item itemToUpdate){
         textToUpdate = text;
+        this.itemToUpdate = itemToUpdate;
     }
 
     public void setOriginalText(String s){
