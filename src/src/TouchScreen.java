@@ -695,7 +695,8 @@ public class TouchScreen {
     }
 
     private Button hideOrShowKeyboard(VirtualKeypad keyboard) {
-        Button hideOrShowKeyboard = new Button("Hide Keyboard");
+        //changed default to show keyboard, as it is initially hidden
+        Button hideOrShowKeyboard = new Button("Show Keyboard");
         hideOrShowKeyboard.setOnAction(e -> {
             if (keyboard.isVisible()) {
                 keyboard.setVisible(false);
