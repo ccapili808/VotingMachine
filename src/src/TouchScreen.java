@@ -24,7 +24,7 @@ public class TouchScreen {
     private final double WINDOW_HEIGHT = 600;
     private static int brightnessLevel;
     private static String masterLanguage = "English";
-    private double textSizeLevel = 12;
+    private double textSizeLevel;
     private VirtualKeypad keyboard = new VirtualKeypad();
     ColorAdjust colorAdjust;
     Rectangle background;
@@ -53,7 +53,7 @@ public class TouchScreen {
         this.colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(0.0);
         //masterLanguage = "English";
-        textSizeLevel = 12;
+        this.textSizeLevel = 12;
         this.root = new Group();
         this.mainRoot = new Group();
         mainRoot.setTranslateX(50);
@@ -95,23 +95,23 @@ public class TouchScreen {
     }
 
     private void increaseTextSize() {
-        if (textSizeLevel > 22) {
+        if (textSizeLevel > 18) {
             return;
         } else {
+            textSizeLevel += 2;
             for (Text text : textList) {
                 text.setFont(new Font(textSizeLevel));
             }
-            textSizeLevel += 2;
         }
     }
     private void decreaseTextSize(){
         if (textSizeLevel < 6) {
             return;
         } else {
+            textSizeLevel -= 2;
             for (Text text : textList) {
                 text.setFont(new Font(textSizeLevel));
             }
-            textSizeLevel -= 2;
         }
     }
 
